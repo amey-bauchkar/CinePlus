@@ -7,6 +7,7 @@ upcoming movies, price comparison matrix, and multi-platform direct booking laun
 
 import os
 import sys
+import re
 import webbrowser
 import threading
 from flask import Flask, render_template, request, jsonify, Response, send_from_directory
@@ -208,21 +209,28 @@ def export_shows():
     city = request.args.get('city', 'Mumbai')
     search = request.args.get('search', '')
     csv_data = export_shows_to_csv(city=city, search_query=search)
+    bom_csv = "\ufeff" + csv_data
+    safe_city = re.sub(r'[^a-zA-Z0-9_\-]', '_', city.lower())
     return Response(
-        csv_data,
-        mimetype="text/csv",
-        headers={"Content-disposition": f"attachment; filename=movie_shows_{city.lower().replace(' ', '_')}.csv"}
+        bom_csv,
+        mimetype="text/csv; charset=utf-8",
+        headers={"Content-Disposition": f'attachment; filename="movie_shows_{safe_city}.csv"'}
     )
 
 @app.route('/api/export/comparison', methods=['GET'])
 def export_comparison():
     movie_id = request.args.get('movie_id')
+    if not movie_id:
+        return Response("movie_id is required", status=400)
     city = request.args.get('city', 'Mumbai')
     csv_data = export_comparison_to_csv(movie_id, city=city)
+    bom_csv = "\ufeff" + csv_data
+    safe_movie = re.sub(r'[^a-zA-Z0-9_\-]', '_', movie_id)
+    safe_city = re.sub(r'[^a-zA-Z0-9_\-]', '_', city.lower())
     return Response(
-        csv_data,
-        mimetype="text/csv",
-        headers={"Content-disposition": f"attachment; filename=price_comparison_{movie_id}_{city.lower()}.csv"}
+        bom_csv,
+        mimetype="text/csv; charset=utf-8",
+        headers={"Content-Disposition": f'attachment; filename="price_comparison_{safe_movie}_{safe_city}.csv"'}
     )
 
 
@@ -272,11 +280,14 @@ def export_price_matrix():
     df.to_csv(output, index=False)
     csv_str = output.getvalue()
 
-    filename = f"cineplus_price_matrix_{matrix['selected_movie']['title'].lower().replace(' ', '_')}_{city.lower()}.csv"
+    bom_csv = "\ufeff" + csv_str
+    movie_title_clean = re.sub(r'[^a-zA-Z0-9_\-]', '_', matrix['selected_movie']['title'].lower())
+    safe_city = re.sub(r'[^a-zA-Z0-9_\-]', '_', city.lower())
+    filename = f"cineplus_price_matrix_{movie_title_clean}_{safe_city}.csv"
     return Response(
-        csv_str,
-        mimetype="text/csv",
-        headers={"Content-disposition": f"attachment; filename={filename}"}
+        bom_csv,
+        mimetype="text/csv; charset=utf-8",
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'}
     )
 
 

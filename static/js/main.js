@@ -275,7 +275,7 @@ function renderMovieGrid(movies) {
               Watch Trailer
             </button>
           ` : ''}
-          <button class="action-btn track-btn" onclick="openAlertForMovie('${mov.id}', '${escapeHtml(mov.title)}', ${mov.min_price})">
+          <button class="action-btn track-btn" onclick="openAlertForMovie('${mov.id}', '${escapeForJsAttr(mov.title)}', ${mov.min_price})">
             Set Price Drop Watcher
           </button>
         </div>
@@ -284,13 +284,21 @@ function renderMovieGrid(movies) {
 
     grid.appendChild(card);
   });
-  renderPagination(total, totalPages);
+  if (total > MOVIES_PER_PAGE) {
+    renderPagination(total, totalPages);
+  } else if (pag) {
+    pag.style.display = 'none';
+  }
 }
 
 // Render Upcoming Movies Grid
 function renderUpcomingGrid(upcoming) {
   const grid = document.getElementById('movie-grid');
   grid.innerHTML = '';
+
+  const total = upcoming.length;
+  const totalPages = Math.ceil(total / MOVIES_PER_PAGE) || 1;
+  const pag = document.getElementById('pagination-controls');
 
   if (upcoming.length === 0) {
     grid.innerHTML = `
@@ -299,6 +307,7 @@ function renderUpcomingGrid(upcoming) {
         <p style="color: var(--color-olive-muted);">Try clearing your search keyword.</p>
       </div>
     `;
+    if (pag) pag.style.display = 'none';
     return;
   }
 
@@ -334,7 +343,7 @@ function renderUpcomingGrid(upcoming) {
           <button class="action-btn trailer-btn" style="width: 100%; margin-bottom: 6px;" onclick="openTrailerModal('${mov.trailer_id}', '${escapeHtml(mov.title)}')">
             Watch Official Trailer
           </button>
-          <button class="action-btn primary" style="width: 100%;" onclick="openAlertForMovie('${mov.id}', '${escapeHtml(mov.title)}', 250)">
+          <button class="action-btn primary" style="width: 100%;" onclick="openAlertForMovie('${mov.id}', '${escapeForJsAttr(mov.title)}', 250)">
             Notify on Ticket Opening
           </button>
         </div>
@@ -343,7 +352,11 @@ function renderUpcomingGrid(upcoming) {
 
     grid.appendChild(card);
   });
-  renderPagination(total, totalPages);
+  if (total > MOVIES_PER_PAGE) {
+    renderPagination(total, totalPages);
+  } else if (pag) {
+    pag.style.display = 'none';
+  }
 }
 
 function updateResultsCount(count, city, type) {
@@ -409,7 +422,7 @@ async function openBookingPortalModal(movieId, theatreName = null, showTime = nu
               <span class="platform-tag" style="background: #fff0f2; color: #eb0028;">Official API</span>
             </div>
             <p class="platform-desc">Instant seat reservation, M-Ticket on WhatsApp & food pre-orders.</p>
-            <a href="${links.bookmyshow}" target="_blank" class="platform-launch-btn btn-bms" onclick="trackBookingClick('BookMyShow', '${escapeHtml(movie.title)}')">
+            <a href="${links.bookmyshow}" target="_blank" class="platform-launch-btn btn-bms" onclick="trackBookingClick('BookMyShow', '${escapeForJsAttr(movie.title)}')">
               Launch BookMyShow &rarr;
             </a>
           </div>
@@ -421,7 +434,7 @@ async function openBookingPortalModal(movieId, theatreName = null, showTime = nu
               <span class="platform-tag" style="background: #fffbf0; color: #d97706;">Direct Multiplex</span>
             </div>
             <p class="platform-desc">Zero convenience fee on Passport subscribers & luxury recliner deals.</p>
-            <a href="${links.pvr_inox}" target="_blank" class="platform-launch-btn btn-pvr" onclick="trackBookingClick('PVR INOX', '${escapeHtml(movie.title)}')">
+            <a href="${links.pvr_inox}" target="_blank" class="platform-launch-btn btn-pvr" onclick="trackBookingClick('PVR INOX', '${escapeForJsAttr(movie.title)}')">
               Launch PVR INOX &rarr;
             </a>
           </div>
@@ -433,7 +446,7 @@ async function openBookingPortalModal(movieId, theatreName = null, showTime = nu
               <span class="platform-tag" style="background: #f3f0ff; color: #7c3aed;">Fast Checkout</span>
             </div>
             <p class="platform-desc">Zomato Gold dining combos & instant cashback on movie tickets.</p>
-            <a href="${links.district}" target="_blank" class="platform-launch-btn btn-district" onclick="trackBookingClick('District', '${escapeHtml(movie.title)}')">
+            <a href="${links.district}" target="_blank" class="platform-launch-btn btn-district" onclick="trackBookingClick('District', '${escapeForJsAttr(movie.title)}')">
               Launch District &rarr;
             </a>
           </div>
@@ -445,7 +458,7 @@ async function openBookingPortalModal(movieId, theatreName = null, showTime = nu
               <span class="platform-tag" style="background: #f0f7ff; color: #0284c7;">Club Cinépolis</span>
             </div>
             <p class="platform-desc">Earn Club Cinepolis points & exclusive Wednesday saver discounts.</p>
-            <a href="${links.cinepolis}" target="_blank" class="platform-launch-btn btn-cinepolis" onclick="trackBookingClick('Cinépolis', '${escapeHtml(movie.title)}')">
+            <a href="${links.cinepolis}" target="_blank" class="platform-launch-btn btn-cinepolis" onclick="trackBookingClick('Cinépolis', '${escapeForJsAttr(movie.title)}')">
               Launch Cinépolis &rarr;
             </a>
           </div>
@@ -1821,3 +1834,33 @@ function exportPriceMatrixCSV() {
   window.location.href = url;
 }
 
+
+// Global modal accessibility & keyboard shortcuts
+window.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    closeTrailerModal();
+    closeCompareModal();
+    closePriceMatrixModal();
+    closeBookingPortalModal();
+    closeAlertsModal();
+  }
+});
+
+// Close modal when user clicks on dark backdrop outside modal card
+document.addEventListener('DOMContentLoaded', () => {
+  const modalIds = ['trailer-modal', 'compare-modal', 'price-matrix-modal', 'booking-portal-modal', 'alerts-modal'];
+  modalIds.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.addEventListener('click', (e) => {
+        if (e.target === el) {
+          if (id === 'trailer-modal') closeTrailerModal();
+          else if (id === 'compare-modal') closeCompareModal();
+          else if (id === 'price-matrix-modal') closePriceMatrixModal();
+          else if (id === 'booking-portal-modal') closeBookingPortalModal();
+          else if (id === 'alerts-modal') closeAlertsModal();
+        }
+      });
+    }
+  });
+});
