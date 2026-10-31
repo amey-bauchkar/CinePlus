@@ -179,5 +179,39 @@ class CinePlusTestSuite(unittest.TestCase):
         self.assertIn('Koramangala', ALL_LOCALITY_KEYS)
         self.assertIn('Indiranagar', ALL_LOCALITY_KEYS)
 
+    def test_10_wallet_matcher_e2e(self):
+        """Verify end-to-end wallet calculation and discount injection into comparison"""
+        # 1. Cards catalogue
+        r_cards = self.client.get('/api/wallet/cards')
+        self.assertEqual(r_cards.status_code, 200)
+        cards_data = r_cards.get_json()
+        self.assertIn('cards', cards_data)
+        self.assertGreater(len(cards_data['cards']), 5)
+
+        # 2. Standalone calculator
+        calc_payload = {
+            "ticket_price": 400,
+            "qty": 2,
+            "theatre_chain": "PVR INOX",
+            "cards": ["icici_sapphiro"]
+        }
+        r_calc = self.client.post('/api/wallet/calculate', json=calc_payload)
+        self.assertEqual(r_calc.status_code, 200)
+        calc_res = r_calc.get_json().get('deal', {})
+        self.assertTrue(calc_res.get('has_offer'))
+        self.assertEqual(calc_res.get('max_savings'), 400)
+        self.assertEqual(calc_res.get('effective_per_ticket'), 200)
+
+        # 3. Injected comparison endpoint
+        r_comp = self.client.get('/api/compare/ET00496545?city=Mumbai&cards=icici_sapphiro&qty=2')
+        self.assertEqual(r_comp.status_code, 200)
+        comp_data = r_comp.get_json().get('comparison', {})
+        self.assertIn('comparison_table', comp_data)
+        if comp_data['comparison_table']:
+            first_row = comp_data['comparison_table'][0]
+            self.assertIn('effective_price', first_row)
+            self.assertIn('wallet_deal', first_row)
+            self.assertIn('savings_amount', first_row)
+
 if __name__ == '__main__':
     unittest.main()
