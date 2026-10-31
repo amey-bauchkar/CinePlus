@@ -14,6 +14,7 @@ import base64
 import urllib.parse
 import urllib.request
 from datetime import datetime, timedelta
+from bank_offers import get_best_wallet_deal
 
 def get_ist_now():
     """Returns current datetime in Indian Standard Time (IST, UTC+5:30) regardless of host system timezone."""
@@ -1659,7 +1660,7 @@ def get_upcoming_movies(city="Mumbai", search_query=None):
     return results
 
 
-def get_price_comparison(movie_id, city="Mumbai", user_lat=None, user_lng=None, sort_by="cheapest"):
+def get_price_comparison(movie_id, city="Mumbai", user_lat=None, user_lng=None, sort_by="cheapest", selected_card_ids=None, ticket_qty=2):
     """
     Generates a real-world multi-tier comparison matrix across all theatres, formats,
     and seat tiers (Silver, Gold, VIP Recliner), enriched with exact geolocation distances
@@ -1707,6 +1708,18 @@ def get_price_comparison(movie_id, city="Mumbai", user_lat=None, user_lng=None, 
             # Outing Smart Value: Ticket Price + Realistic Travel Friction - Experience Bonus (Rating)
             smart_score = round(silver_p + (dist_km * 7.5) - (theatre_rating * 4.0), 1)
 
+            # Bank Card Offer / Wallet Optimization
+            t_qty = max(1, int(ticket_qty)) if ticket_qty else 2
+            deal = get_best_wallet_deal(
+                ticket_price=silver_p,
+                qty=t_qty,
+                theatre_chain=t["chain"],
+                selected_card_ids=selected_card_ids
+            )
+            eff_price = deal["effective_per_ticket"]
+            eff_total = deal["effective_total"]
+            savings_amt = deal["max_savings"]
+
             rows.append({
                 "theatre": t["theatre_name"],
                 "chain": t["chain"],
@@ -1722,6 +1735,10 @@ def get_price_comparison(movie_id, city="Mumbai", user_lat=None, user_lng=None, 
                 "time": s["time"],
                 "format": s["format"],
                 "silver_price": silver_p,
+                "effective_price": eff_price,
+                "effective_total": eff_total,
+                "savings_amount": savings_amt,
+                "wallet_deal": deal,
                 "gold_price": s["gold"],
                 "recliner_price": s["recliner"],
                 "seats_left": s["seats_left"],
@@ -1766,6 +1783,8 @@ def get_price_comparison(movie_id, city="Mumbai", user_lat=None, user_lng=None, 
         "vip_best_option": vip_best,
         "sort_by": sort_by,
         "total_shows": len(rows),
+        "selected_cards": selected_card_ids or [],
+        "ticket_qty": ticket_qty,
         "promos": PROMO_CODES,
         "comparison_table": rows
     }

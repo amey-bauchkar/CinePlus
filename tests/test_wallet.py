@@ -88,5 +88,53 @@ class TestBankOffers(unittest.TestCase):
         self.assertEqual(best['effective_total'], 400)
         self.assertEqual(best['effective_per_ticket'], 200)
 
+class TestWalletAPI(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        from app import app
+        app.config['TESTING'] = True
+        cls.client = app.test_client()
+
+    def test_07_api_wallet_cards(self):
+        """Verify GET /api/wallet/cards returns supported cards catalogue"""
+        r = self.client.get('/api/wallet/cards')
+        self.assertEqual(r.status_code, 200)
+        data = r.get_json()
+        self.assertEqual(data.get('status'), 'success')
+        self.assertIn('cards', data)
+        self.assertGreater(len(data['cards']), 5)
+
+    def test_08_api_wallet_calculate(self):
+        """Verify POST /api/wallet/calculate calculates savings accurately"""
+        payload = {
+            "ticket_price": 300,
+            "qty": 2,
+            "theatre_chain": "PVR INOX",
+            "cards": ["icici_sapphiro", "kotak_pvr"]
+        }
+        r = self.client.post('/api/wallet/calculate', json=payload)
+        self.assertEqual(r.status_code, 200)
+        data = r.get_json()
+        self.assertEqual(data.get('status'), 'success')
+        deal = data.get('deal', {})
+        self.assertTrue(deal.get('has_offer'))
+        self.assertEqual(deal.get('max_savings'), 300)
+        self.assertEqual(deal.get('effective_per_ticket'), 150)
+
+    def test_09_api_compare_with_wallet(self):
+        """Verify /api/compare/<movie_id> attaches wallet deal when cards and qty are passed"""
+        r = self.client.get('/api/compare/ET00496545?city=Mumbai&cards=icici_sapphiro,sbi_elite&qty=2')
+        self.assertEqual(r.status_code, 200)
+        data = r.get_json()
+        self.assertEqual(data.get('status'), 'success')
+        comp = data.get('comparison', {})
+        self.assertIn('comparison_table', comp)
+        if comp['comparison_table']:
+            row = comp['comparison_table'][0]
+            self.assertIn('wallet_deal', row)
+            self.assertIn('effective_price', row)
+            self.assertIn('effective_total', row)
+            self.assertIn('savings_amount', row)
+
 if __name__ == '__main__':
     unittest.main()

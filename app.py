@@ -11,6 +11,7 @@ import re
 import webbrowser
 import threading
 from flask import Flask, render_template, request, jsonify, Response, send_from_directory
+from bank_offers import SUPPORTED_CARDS, calculate_card_benefit, get_best_wallet_deal
 from finder_engine import (
     CITIES, THEATRES, NOW_SHOWING_MOVIES, UPCOMING_MOVIES, PROMO_CODES,
     get_movie_shows, get_upcoming_movies, get_price_comparison, get_booking_details, get_price_matrix,
@@ -100,13 +101,50 @@ def api_upcoming():
         "upcoming_movies": upcoming
     })
 
+@app.route('/api/wallet/cards', methods=['GET'])
+def api_wallet_cards():
+    return jsonify({
+        "status": "success",
+        "count": len(SUPPORTED_CARDS),
+        "cards": SUPPORTED_CARDS
+    })
+
+@app.route('/api/wallet/calculate', methods=['POST'])
+def api_wallet_calculate():
+    payload = request.get_json() or {}
+    ticket_price = payload.get('ticket_price', 250)
+    qty = payload.get('qty', 2)
+    theatre_chain = payload.get('theatre_chain', 'PVR INOX')
+    cards = payload.get('cards', [])
+    deal = get_best_wallet_deal(
+        ticket_price=ticket_price,
+        qty=qty,
+        theatre_chain=theatre_chain,
+        selected_card_ids=cards
+    )
+    return jsonify({
+        "status": "success",
+        "deal": deal
+    })
+
 @app.route('/api/compare/<movie_id>', methods=['GET'])
 def api_compare_alias(movie_id):
     city = request.args.get('city', 'Mumbai')
     user_lat = request.args.get('user_lat', type=float) or request.args.get('lat', type=float)
     user_lng = request.args.get('user_lng', type=float) or request.args.get('user_lon', type=float) or request.args.get('lng', type=float) or request.args.get('lon', type=float)
     sort_by = request.args.get('sort_by') or request.args.get('sort', 'cheapest')
-    data = get_price_comparison(movie_id, city=city, user_lat=user_lat, user_lng=user_lng, sort_by=sort_by)
+    cards_raw = request.args.get('cards', '')
+    selected_cards = [c.strip() for c in cards_raw.split(',') if c.strip()] if cards_raw else None
+    ticket_qty = max(1, min(10, request.args.get('qty', 2, type=int)))
+    data = get_price_comparison(
+        movie_id, 
+        city=city, 
+        user_lat=user_lat, 
+        user_lng=user_lng, 
+        sort_by=sort_by,
+        selected_card_ids=selected_cards,
+        ticket_qty=ticket_qty
+    )
     if not data:
         return jsonify({"status": "error", "message": "Movie not found"}), 404
     return jsonify({"status": "success", "comparison": data})
@@ -118,10 +156,21 @@ def api_comparison():
     user_lat = request.args.get('user_lat', type=float) or request.args.get('lat', type=float)
     user_lng = request.args.get('user_lng', type=float) or request.args.get('user_lon', type=float) or request.args.get('lng', type=float) or request.args.get('lon', type=float)
     sort_by = request.args.get('sort', 'cheapest')
+    cards_raw = request.args.get('cards', '')
+    selected_cards = [c.strip() for c in cards_raw.split(',') if c.strip()] if cards_raw else None
+    ticket_qty = max(1, min(10, request.args.get('qty', 2, type=int)))
     if not movie_id:
         return jsonify({"status": "error", "message": "movie_id is required"}), 400
         
-    data = get_price_comparison(movie_id, city=city, user_lat=user_lat, user_lng=user_lng, sort_by=sort_by)
+    data = get_price_comparison(
+        movie_id, 
+        city=city, 
+        user_lat=user_lat, 
+        user_lng=user_lng, 
+        sort_by=sort_by,
+        selected_card_ids=selected_cards,
+        ticket_qty=ticket_qty
+    )
     if not data:
         return jsonify({"status": "error", "message": "Movie not found"}), 404
         
