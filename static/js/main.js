@@ -173,8 +173,8 @@ async function loadMovies() {
 // Load Upcoming Tentpoles
 async function loadUpcomingMovies() {
   const searchQuery = document.getElementById('nav-search-input').value;
-  let url = '/api/upcoming';
-  if (searchQuery) url += `?search=${encodeURIComponent(searchQuery)}`;
+  let url = `/api/upcoming?city=${encodeURIComponent(currentCity)}`;
+  if (searchQuery) url += `&search=${encodeURIComponent(searchQuery)}`;
 
   try {
     const res = await fetch(url);

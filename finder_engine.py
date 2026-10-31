@@ -547,7 +547,7 @@ UPCOMING_MOVIES = [
 CACHE_TTL = 900
 _city_movies_cache = {}    # city -> (timestamp, [movies])
 _movie_shows_cache = {}    # f"{movie_id}_{city}" -> (timestamp, [theatres])
-_upcoming_cache = (0, [])  # (timestamp, [upcoming_movies])
+_upcoming_cache = {}  # clean_city -> (timestamp, [upcoming_movies])
 
 HTTP_HEADERS = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
@@ -1577,18 +1577,20 @@ def get_movie_shows(city="Mumbai", search_query=None, selected_formats=None, max
     return results
 
 
-def get_upcoming_movies(search_query=None):
+def get_upcoming_movies(city="Mumbai", search_query=None):
     """
-    Fetches real-world upcoming movies from BookMyShow's explore endpoint with caching.
+    Fetches real-world upcoming movies from BookMyShow's explore endpoint with caching per city.
     """
     global _upcoming_cache
     now = time.time()
+    clean_city = CITY_SLUGS.get(city, "mumbai")
 
-    if _upcoming_cache[1] and (now - _upcoming_cache[0] < CACHE_TTL):
-        raw_upcoming = _upcoming_cache[1]
+    cached = _upcoming_cache.get(clean_city)
+    if cached and (now - cached[0] < CACHE_TTL):
+        raw_upcoming = cached[1]
     else:
         try:
-            url = "https://in.bookmyshow.com/explore/upcoming-movies-mumbai"
+            url = f"https://in.bookmyshow.com/explore/upcoming-movies-{clean_city}"
             r = requests.get(url, headers=HTTP_HEADERS, timeout=7)
             extracted = []
             if r.status_code == 200:
@@ -1640,9 +1642,9 @@ def get_upcoming_movies(search_query=None):
                                                 "trailer_id": "auto"
                                             })
             raw_upcoming = extracted if extracted else UPCOMING_MOVIES
-            _upcoming_cache = (now, raw_upcoming)
+            _upcoming_cache[clean_city] = (now, raw_upcoming)
         except Exception as e:
-            print(f"Error fetching upcoming movies: {e}")
+            print(f"Error fetching upcoming movies for {city}: {e}")
             raw_upcoming = UPCOMING_MOVIES
 
     results = []
@@ -1696,8 +1698,14 @@ def get_price_comparison(movie_id, city="Mumbai", user_lat=None, user_lng=None, 
 
         for s in t["shows"]:
             silver_p = s["silver"]
-            # Smart Value Index: Ticket Price + ₹3.50 per km travel friction factor
-            smart_score = round(silver_p + (dist_km * 3.5), 1)
+            # Outing Intelligence: Real-world travel metrics
+            # Average Indian metro auto/cab fare round-trip is ~₹10-14/km; travel time ~2.8 min/km
+            est_travel_cost = round(dist_km * 12)
+            est_travel_time_mins = max(5, round(dist_km * 2.8))
+            total_outing_cost = silver_p + est_travel_cost
+            theatre_rating = float(t.get("rating", 4.2))
+            # Outing Smart Value: Ticket Price + Realistic Travel Friction - Experience Bonus (Rating)
+            smart_score = round(silver_p + (dist_km * 7.5) - (theatre_rating * 4.0), 1)
 
             rows.append({
                 "theatre": t["theatre_name"],
@@ -1707,7 +1715,10 @@ def get_price_comparison(movie_id, city="Mumbai", user_lat=None, user_lng=None, 
                 "theatre_lng": t_lng,
                 "distance_km": dist_km,
                 "smart_score": smart_score,
-                "theatre_rating": t["rating"],
+                "theatre_rating": theatre_rating,
+                "est_travel_cost": est_travel_cost,
+                "est_travel_time_mins": est_travel_time_mins,
+                "total_outing_cost": total_outing_cost,
                 "time": s["time"],
                 "format": s["format"],
                 "silver_price": silver_p,

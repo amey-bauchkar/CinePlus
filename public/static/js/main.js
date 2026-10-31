@@ -173,8 +173,8 @@ async function loadMovies() {
 // Load Upcoming Tentpoles
 async function loadUpcomingMovies() {
   const searchQuery = document.getElementById('nav-search-input').value;
-  let url = '/api/upcoming';
-  if (searchQuery) url += `?search=${encodeURIComponent(searchQuery)}`;
+  let url = `/api/upcoming?city=${encodeURIComponent(currentCity)}`;
+  if (searchQuery) url += `&search=${encodeURIComponent(searchQuery)}`;
 
   try {
     const res = await fetch(url);
@@ -228,7 +228,7 @@ function renderMovieGrid(movies) {
           </div>
           <div class="timing-chips">
             ${firstTheatre.shows.slice(0, 3).map(s => `
-              <button class="timing-chip" onclick="openBookingPortalModal('${mov.id}', '${escapeHtml(firstTheatre.theatre_name)}', '${s.time}', '${s.format}', '${s.booking_url || ''}')" title="Click to book: ${s.format} - Silver ₹${s.silver}">
+              <button class="timing-chip" onclick="openBookingPortalModal('${mov.id}', '${escapeForJsAttr(firstTheatre.theatre_name)}', '${s.time}', '${s.format}', '${s.booking_url || ''}')" title="Click to book: ${s.format} - Silver ₹${s.silver}">
                 <span>${s.time}</span>
                 <span class="chip-price">₹${s.silver}</span>
               </button>
@@ -275,7 +275,7 @@ function renderMovieGrid(movies) {
               Watch Trailer
             </button>
           ` : ''}
-          <button class="action-btn track-btn" onclick="openAlertForMovie('${mov.id}', '${escapeHtml(mov.title)}', ${mov.min_price})">
+          <button class="action-btn track-btn" onclick="openAlertForMovie('${mov.id}', '${escapeForJsAttr(mov.title)}', ${mov.min_price})">
             Set Price Drop Watcher
           </button>
         </div>
@@ -284,13 +284,21 @@ function renderMovieGrid(movies) {
 
     grid.appendChild(card);
   });
-  renderPagination(total, totalPages);
+  if (total > MOVIES_PER_PAGE) {
+    renderPagination(total, totalPages);
+  } else if (pag) {
+    pag.style.display = 'none';
+  }
 }
 
 // Render Upcoming Movies Grid
 function renderUpcomingGrid(upcoming) {
   const grid = document.getElementById('movie-grid');
   grid.innerHTML = '';
+
+  const total = upcoming.length;
+  const totalPages = Math.ceil(total / MOVIES_PER_PAGE) || 1;
+  const pag = document.getElementById('pagination-controls');
 
   if (upcoming.length === 0) {
     grid.innerHTML = `
@@ -299,6 +307,7 @@ function renderUpcomingGrid(upcoming) {
         <p style="color: var(--color-olive-muted);">Try clearing your search keyword.</p>
       </div>
     `;
+    if (pag) pag.style.display = 'none';
     return;
   }
 
@@ -326,7 +335,7 @@ function renderUpcomingGrid(upcoming) {
         </p>
 
         <div style="font-size: 11px; color: var(--color-olive-muted); margin-bottom: 12px;">
-          <strong>Starring:</strong> ${mov.cast ? mov.cast.join(', ') : 'All-Star Cast'}<br>
+          <strong>Starring:</strong> ${mov.cast && Array.isArray(mov.cast) ? mov.cast.map(escapeHtml).join(', ') : 'All-Star Cast'}<br>
           <strong>Director:</strong> ${escapeHtml(mov.director)}
         </div>
 
@@ -334,7 +343,7 @@ function renderUpcomingGrid(upcoming) {
           <button class="action-btn trailer-btn" style="width: 100%; margin-bottom: 6px;" onclick="openTrailerModal('${mov.trailer_id}', '${escapeHtml(mov.title)}')">
             Watch Official Trailer
           </button>
-          <button class="action-btn primary" style="width: 100%;" onclick="openAlertForMovie('${mov.id}', '${escapeHtml(mov.title)}', 250)">
+          <button class="action-btn primary" style="width: 100%;" onclick="openAlertForMovie('${mov.id}', '${escapeForJsAttr(mov.title)}', 250)">
             Notify on Ticket Opening
           </button>
         </div>
@@ -343,7 +352,11 @@ function renderUpcomingGrid(upcoming) {
 
     grid.appendChild(card);
   });
-  renderPagination(total, totalPages);
+  if (total > MOVIES_PER_PAGE) {
+    renderPagination(total, totalPages);
+  } else if (pag) {
+    pag.style.display = 'none';
+  }
 }
 
 function updateResultsCount(count, city, type) {
@@ -409,7 +422,7 @@ async function openBookingPortalModal(movieId, theatreName = null, showTime = nu
               <span class="platform-tag" style="background: #fff0f2; color: #eb0028;">Official API</span>
             </div>
             <p class="platform-desc">Instant seat reservation, M-Ticket on WhatsApp & food pre-orders.</p>
-            <a href="${links.bookmyshow}" target="_blank" class="platform-launch-btn btn-bms" onclick="trackBookingClick('BookMyShow', '${escapeHtml(movie.title)}')">
+            <a href="${links.bookmyshow}" target="_blank" class="platform-launch-btn btn-bms" onclick="trackBookingClick('BookMyShow', '${escapeForJsAttr(movie.title)}')">
               Launch BookMyShow &rarr;
             </a>
           </div>
@@ -421,7 +434,7 @@ async function openBookingPortalModal(movieId, theatreName = null, showTime = nu
               <span class="platform-tag" style="background: #fffbf0; color: #d97706;">Direct Multiplex</span>
             </div>
             <p class="platform-desc">Zero convenience fee on Passport subscribers & luxury recliner deals.</p>
-            <a href="${links.pvr_inox}" target="_blank" class="platform-launch-btn btn-pvr" onclick="trackBookingClick('PVR INOX', '${escapeHtml(movie.title)}')">
+            <a href="${links.pvr_inox}" target="_blank" class="platform-launch-btn btn-pvr" onclick="trackBookingClick('PVR INOX', '${escapeForJsAttr(movie.title)}')">
               Launch PVR INOX &rarr;
             </a>
           </div>
@@ -433,7 +446,7 @@ async function openBookingPortalModal(movieId, theatreName = null, showTime = nu
               <span class="platform-tag" style="background: #f3f0ff; color: #7c3aed;">Fast Checkout</span>
             </div>
             <p class="platform-desc">Zomato Gold dining combos & instant cashback on movie tickets.</p>
-            <a href="${links.district}" target="_blank" class="platform-launch-btn btn-district" onclick="trackBookingClick('District', '${escapeHtml(movie.title)}')">
+            <a href="${links.district}" target="_blank" class="platform-launch-btn btn-district" onclick="trackBookingClick('District', '${escapeForJsAttr(movie.title)}')">
               Launch District &rarr;
             </a>
           </div>
@@ -445,7 +458,7 @@ async function openBookingPortalModal(movieId, theatreName = null, showTime = nu
               <span class="platform-tag" style="background: #f0f7ff; color: #0284c7;">Club Cinépolis</span>
             </div>
             <p class="platform-desc">Earn Club Cinepolis points & exclusive Wednesday saver discounts.</p>
-            <a href="${links.cinepolis}" target="_blank" class="platform-launch-btn btn-cinepolis" onclick="trackBookingClick('Cinépolis', '${escapeHtml(movie.title)}')">
+            <a href="${links.cinepolis}" target="_blank" class="platform-launch-btn btn-cinepolis" onclick="trackBookingClick('Cinépolis', '${escapeForJsAttr(movie.title)}')">
               Launch Cinépolis &rarr;
             </a>
           </div>
@@ -547,13 +560,14 @@ function openTrailerModal(trailerId, movieTitle) {
 }
 
 function mountTrailerIframe(id, movieTitle) {
+  const cleanId = String(id).replace(/[^a-zA-Z0-9_\-]/g, '');
   const wrapper = document.getElementById('trailer-video-wrapper');
   const externalLink = document.getElementById('trailer-external-link');
   if (externalLink) {
-    externalLink.href = `https://www.youtube.com/watch?v=${id}`;
+    externalLink.href = `https://www.youtube.com/watch?v=${cleanId}`;
   }
 
-  const embedUrl = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&modestbranding=1&enablejsapi=1`;
+  const embedUrl = `https://www.youtube-nocookie.com/embed/${cleanId}?autoplay=1&rel=0&modestbranding=1&enablejsapi=1`;
   wrapper.innerHTML = `
     <iframe src="${embedUrl}" 
             title="${escapeHtml(movieTitle)} Official Trailer" 
@@ -628,8 +642,17 @@ function filterCategory(cat) {
 }
 
 function onCityChange() {
+  const citySelect = document.getElementById('city-select');
+  if (citySelect) {
+    currentCity = citySelect.value;
+  }
+  // Clear cached comparison coordinates when switching city so new city default hub / GPS is used
+  currentCompareUserCoords = { lat: null, lng: null, name: '' };
+
   if (currentActiveTab === 'now_showing') {
     loadMovies();
+  } else if (currentActiveTab === 'upcoming') {
+    loadUpcomingMovies();
   }
 }
 
@@ -879,9 +902,9 @@ function renderComparisonTableBody() {
       <div class="compare-banner best-value-banner">
         <div>
           <strong>⭐ Best Value Deal:</strong> ${escapeHtml(topRow.theatre)} (${topRow.format}) at <strong>₹${topRow.silver_price}</strong>
-          <span class="banner-subtext">• 📍 ${topRow.distance_km} km away (Optimal balance of low ticket price & shortest commute)</span>
+          <span class="banner-subtext">• 📍 ${topRow.distance_km < 0.5 ? '< 0.5 km' : topRow.distance_km + ' km'} away (Optimal balance of low ticket price & shortest commute)</span>
         </div>
-        <button class="action-btn primary" style="font-size: 12px; padding: 6px 12px;" onclick="openBookingPortalModal('${currentMovieForCompare}', '${escapeHtml(topRow.theatre)}', '${topRow.time}', '${topRow.format}', '${topRow.booking_url || ''}')">
+        <button class="action-btn primary" style="font-size: 12px; padding: 6px 12px;" onclick="openBookingPortalModal('${currentMovieForCompare}', '${escapeForJsAttr(topRow.theatre)}', '${topRow.time}', '${topRow.format}', '${topRow.booking_url || ''}')">
           Book Best Value Show &rarr;
         </button>
       </div>
@@ -891,9 +914,9 @@ function renderComparisonTableBody() {
       <div class="compare-banner nearest-banner">
         <div>
           <strong>📍 Nearest Multiplex:</strong> ${escapeHtml(topRow.theatre)} (${topRow.format}) at <strong>₹${topRow.silver_price}</strong>
-          <span class="banner-subtext">• Only ${topRow.distance_km} km from you</span>
+          <span class="banner-subtext">• Only ${topRow.distance_km < 0.5 ? '< 0.5 km' : topRow.distance_km + ' km'} from you</span>
         </div>
-        <button class="action-btn primary" style="font-size: 12px; padding: 6px 12px;" onclick="openBookingPortalModal('${currentMovieForCompare}', '${escapeHtml(topRow.theatre)}', '${topRow.time}', '${topRow.format}', '${topRow.booking_url || ''}')">
+        <button class="action-btn primary" style="font-size: 12px; padding: 6px 12px;" onclick="openBookingPortalModal('${currentMovieForCompare}', '${escapeForJsAttr(topRow.theatre)}', '${topRow.time}', '${topRow.format}', '${topRow.booking_url || ''}')">
           Book Nearest Show &rarr;
         </button>
       </div>
@@ -903,9 +926,9 @@ function renderComparisonTableBody() {
       <div class="compare-banner cheapest-banner">
         <div>
           <strong>🏷️ Lowest Price Found:</strong> ${escapeHtml(topRow.theatre)} (${topRow.format}) at <strong>₹${topRow.silver_price}</strong>
-          <span class="banner-subtext">• 📍 ${topRow.distance_km} km away</span>
+          <span class="banner-subtext">• 📍 ${topRow.distance_km < 0.5 ? '< 0.5 km' : topRow.distance_km + ' km'} away</span>
         </div>
-        <button class="action-btn primary" style="font-size: 12px; padding: 6px 12px;" onclick="openBookingPortalModal('${currentMovieForCompare}', '${escapeHtml(topRow.theatre)}', '${topRow.time}', '${topRow.format}', '${topRow.booking_url || ''}')">
+        <button class="action-btn primary" style="font-size: 12px; padding: 6px 12px;" onclick="openBookingPortalModal('${currentMovieForCompare}', '${escapeForJsAttr(topRow.theatre)}', '${topRow.time}', '${topRow.format}', '${topRow.booking_url || ''}')">
           Book Lowest Price Show &rarr;
         </button>
       </div>
@@ -940,7 +963,7 @@ function renderComparisonTableBody() {
           </div>
         </td>
         <td class="compare-dist-cell">
-          <strong>${row.distance_km} km</strong>
+          <strong>${row.distance_km < 0.5 ? '< 0.5 km' : row.distance_km + ' km'}</strong>
           <span class="compare-dist-pill ${distPillClass}">${row.distance_km <= 5 ? 'Nearby' : (row.distance_km <= 15 ? 'Moderate' : 'Far')}</span>
         </td>
         <td><strong>${row.time}</strong></td>
@@ -954,7 +977,7 @@ function renderComparisonTableBody() {
           </span>
         </td>
         <td>
-          <button class="action-btn primary" style="padding: 4px 10px; font-size: 11px;" onclick="openBookingPortalModal('${currentMovieForCompare}', '${escapeHtml(row.theatre)}', '${row.time}', '${row.format}', '${row.booking_url || ''}')">
+          <button class="action-btn primary" style="padding: 4px 10px; font-size: 11px;" onclick="openBookingPortalModal('${currentMovieForCompare}', '${escapeForJsAttr(row.theatre)}', '${row.time}', '${row.format}', '${row.booking_url || ''}')">
             Book &rarr;
           </button>
         </td>
@@ -1100,12 +1123,12 @@ function renderAlertsList(alerts) {
             ${isTriggered ? '<span class="badge-alert-triggered">🔥 TRIGGERED</span>' : '<span class="badge-alert-active">ACTIVE WATCHER</span>'}
           </div>
           <div style="font-size: 11px; color: var(--color-olive-muted); margin-top: 3px;">
-            Target: <strong>₹${a.target_price}</strong> | Current: <strong style="${isTriggered ? 'color: #16a34a;' : ''}">₹${a.last_price_found || 'Scanning...'}</strong> | ${escapeHtml(a.city)} • ${a.format_type}
+            Target: <strong>₹${Number(a.target_price) || 200}</strong> | Current: <strong style="${isTriggered ? 'color: #16a34a;' : ''}">₹${Number(a.last_price_found) || 'Scanning...'}</strong> | ${escapeHtml(a.city)} • ${escapeHtml(a.format_type)}
           </div>
         </div>
         <div style="display: flex; align-items: center; gap: 8px;">
-          ${isTriggered ? `<button class="action-btn primary" style="font-size: 11px; padding: 4px 10px;" onclick="closeAlertsModal(); openPriceMatrixModal('${a.movie_id}');">View Deal &rarr;</button>` : ''}
-          <button class="reset-link" style="color: var(--brand-black); font-size: 11px; font-weight: 700;" onclick="deleteAlert('${a.id}')">Delete</button>
+          ${isTriggered ? `<button class="action-btn primary" style="font-size: 11px; padding: 4px 10px;" onclick="closeAlertsModal(); openPriceMatrixModal('${escapeForJsAttr(a.movie_id)}');">View Deal &rarr;</button>` : ''}
+          <button class="reset-link" style="color: var(--brand-black); font-size: 11px; font-weight: 700;" onclick="deleteAlert('${escapeForJsAttr(a.id)}')">Delete</button>
         </div>
       </div>
     `;
@@ -1320,6 +1343,16 @@ function escapeHtml(str) {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#039;');
+}
+
+function escapeForJsAttr(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/\\/g, '\\\\')
+    .replace(/'/g, "\\'")
+    .replace(/"/g, '&quot;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
 }
 
 
@@ -1657,7 +1690,7 @@ function renderPriceMatrixContent(data) {
               <span class="savings-pct">(${deal.savings_pct}% OFF PEAK EVENING)</span>
             </div>
             <p class="golden-deal-desc">
-              Book <strong>${escapeHtml(deal.movie_title)}</strong> at <strong>${escapeHtml(deal.theatre_name)}</strong> ${deal.distance_km != null ? `<span class="theatre-dist-badge">📍 ${deal.distance_km} km away</span>` : ''} during the <strong>${deal.time_window} (${deal.show_time})</strong> for only <strong>₹${deal.deal_price}</strong> instead of the ₹${deal.peak_avg_price} prime evening average.
+              Book <strong>${escapeHtml(deal.movie_title)}</strong> at <strong>${escapeHtml(deal.theatre_name)}</strong> ${deal.distance_km != null ? `<span class="theatre-dist-badge">📍 ${deal.distance_km < 0.5 ? '< 0.5 km' : deal.distance_km + ' km'} away</span>` : ''} during the <strong>${deal.time_window} (${deal.show_time})</strong> for only <strong>₹${deal.deal_price}</strong> instead of the ₹${deal.peak_avg_price} prime evening average.
             </p>
           </div>
           <div class="golden-deal-action">
@@ -1710,7 +1743,7 @@ function renderPriceMatrixContent(data) {
         <div class="cheapest-label">Cheapest in Slot:</div>
         <div class="cheapest-theatre" title="${escapeHtml(cheapest.theatre_name)}">${escapeHtml(cheapest.theatre_name)}</div>
         <div class="cheapest-meta">${cheapest.time} • ${cheapest.format}</div>
-        ${cheapest.distance_km != null ? `<div class="slot-dist-sub">📍 ${cheapest.distance_km} km away</div>` : ''}
+        ${cheapest.distance_km != null ? `<div class="slot-dist-sub">📍 ${cheapest.distance_km < 0.5 ? '< 0.5 km' : cheapest.distance_km + ' km'} away</div>` : ''}
         <a href="${cheapest.booking_url}" target="_blank" rel="noopener noreferrer" class="btn-book-slot">
           Book ₹${cheapest.silver} Show ↗
         </a>
@@ -1802,3 +1835,33 @@ function exportPriceMatrixCSV() {
   window.location.href = url;
 }
 
+
+// Global modal accessibility & keyboard shortcuts
+window.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    closeTrailerModal();
+    closeCompareModal();
+    closePriceMatrixModal();
+    closeBookingPortalModal();
+    closeAlertsModal();
+  }
+});
+
+// Close modal when user clicks on dark backdrop outside modal card
+document.addEventListener('DOMContentLoaded', () => {
+  const modalIds = ['trailer-modal', 'compare-modal', 'price-matrix-modal', 'booking-portal-modal', 'alerts-modal'];
+  modalIds.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.addEventListener('click', (e) => {
+        if (e.target === el) {
+          if (id === 'trailer-modal') closeTrailerModal();
+          else if (id === 'compare-modal') closeCompareModal();
+          else if (id === 'price-matrix-modal') closePriceMatrixModal();
+          else if (id === 'booking-portal-modal') closeBookingPortalModal();
+          else if (id === 'alerts-modal') closeAlertsModal();
+        }
+      });
+    }
+  });
+});

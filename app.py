@@ -90,13 +90,26 @@ def api_movies():
 
 @app.route('/api/upcoming', methods=['GET'])
 def api_upcoming():
+    city = request.args.get('city', 'Mumbai')
     search = request.args.get('search', '')
-    upcoming = get_upcoming_movies(search_query=search)
+    upcoming = get_upcoming_movies(city=city, search_query=search)
     return jsonify({
         "status": "success",
+        "city": city,
         "count": len(upcoming),
         "upcoming_movies": upcoming
     })
+
+@app.route('/api/compare/<movie_id>', methods=['GET'])
+def api_compare_alias(movie_id):
+    city = request.args.get('city', 'Mumbai')
+    user_lat = request.args.get('user_lat', type=float) or request.args.get('lat', type=float)
+    user_lng = request.args.get('user_lng', type=float) or request.args.get('user_lon', type=float) or request.args.get('lng', type=float) or request.args.get('lon', type=float)
+    sort_by = request.args.get('sort_by') or request.args.get('sort', 'cheapest')
+    data = get_price_comparison(movie_id, city=city, user_lat=user_lat, user_lng=user_lng, sort_by=sort_by)
+    if not data:
+        return jsonify({"status": "error", "message": "Movie not found"}), 404
+    return jsonify({"status": "success", "comparison": data})
 
 @app.route('/api/comparison', methods=['GET'])
 def api_comparison():
@@ -220,10 +233,19 @@ def api_alerts():
         alert_manager.delete_alert(alert_id)
         return jsonify({"status": "success", "message": "Alert deleted"})
 
+@app.route('/api/alerts/<alert_id>', methods=['DELETE'])
+def api_delete_alert_alias(alert_id):
+    clean_id = re.sub(r'[^a-zA-Z0-9_\-]', '', str(alert_id))[:60]
+    if not clean_id:
+        return jsonify({"status": "error", "message": "Valid alert_id is required"}), 400
+    alert_manager.delete_alert(clean_id)
+    return jsonify({"status": "success", "message": "Alert deleted"})
+
 @app.route('/api/alerts/simulate', methods=['POST'])
 def api_simulate_alert():
     payload = request.get_json() or {}
-    action = "surge" if payload.get('action') == "surge" else "drop"
+    raw_action = str(payload.get('action', 'drop')).strip().lower()
+    action = raw_action if raw_action in ['drop', 'surge', 'reset'] else 'drop'
     movie_id = re.sub(r'[^a-zA-Z0-9_\-]', '', str(payload.get('movie_id') or ''))[:50]
     
     city = payload.get('city', 'Mumbai')
@@ -248,6 +270,16 @@ def api_simulate_alert():
         city=city
     )
     return jsonify({"status": "success", "result": result})
+
+@app.route('/api/export/csv', methods=['GET'])
+def export_csv_unified():
+    export_type = request.args.get('type', 'movies').lower()
+    if export_type in ['compare', 'comparison']:
+        return export_comparison()
+    elif export_type in ['matrix', 'price-matrix', 'pricematrix']:
+        return export_price_matrix()
+    else:
+        return export_shows()
 
 @app.route('/api/export/shows', methods=['GET'])
 def export_shows():
