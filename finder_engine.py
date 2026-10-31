@@ -13,7 +13,11 @@ import time
 import base64
 import urllib.parse
 import urllib.request
-from datetime import datetime
+from datetime import datetime, timedelta
+
+def get_ist_now():
+    """Returns current datetime in Indian Standard Time (IST, UTC+5:30) regardless of host system timezone."""
+    return datetime.utcnow() + timedelta(hours=5, minutes=30)
 from concurrent.futures import ThreadPoolExecutor
 import requests
 from bs4 import BeautifulSoup
@@ -1122,16 +1126,23 @@ def resolve_theatre_coordinates(theatre_name, location, city="Mumbai"):
     return CITY_CENTERS.get(city, (19.0760, 72.8777))
 
 
+# Pre-sorted keys across all Indian metros for fast, deterministic locality extraction
+ALL_LOCALITY_KEYS = sorted(LOCALITY_COORDINATES.keys(), key=lambda x: len(x), reverse=True)
+METRO_NAMES = {
+    'mumbai', 'navi mumbai', 'thane', 'delhi', 'new delhi', 'noida', 'gurgaon', 'gurugram',
+    'bengaluru', 'bangalore', 'hyderabad', 'secunderabad', 'chennai', 'kolkata', 'pune', 'ahmedabad'
+}
+
 def _resolve_theatre_location(vname, default_city="Mumbai"):
     v_clean = re.sub(r'\(.*?\)', '', vname)
-    for loc in MUMBAI_LOCALITIES:
+    for loc in ALL_LOCALITY_KEYS:
         if re.search(r'\b' + re.escape(loc) + r'\b', v_clean, re.IGNORECASE):
             return loc
     parts = [p.strip() for p in vname.split(',') if p.strip()]
     if len(parts) > 1:
         for p in reversed(parts):
             p_sub = re.sub(r'\(.*?\)', '', p).strip()
-            if p_sub.lower() not in ['mumbai', 'navi mumbai']:
+            if p_sub.lower() not in METRO_NAMES:
                 return p_sub
     return default_city
 
@@ -1155,7 +1166,7 @@ def _fetch_bms_real_showtimes(movie_slug, city_slug, event_code):
     Fetches real-world theatres, showtimes, seat categories, and exact ticket prices
     from BookMyShow's SSR showtimes payload.
     """
-    today = datetime.now().strftime('%Y%m%d')
+    today = get_ist_now().strftime('%Y%m%d')
     buy_url = f"https://in.bookmyshow.com/buytickets/{movie_slug}-{city_slug}/movie-{city_slug}-{event_code}-MT/{today}"
 
     try:
@@ -1370,7 +1381,7 @@ def generate_multiplatform_booking_links(movie_title, theatre_name, city, show_t
     clean_city = CITY_SLUGS.get(city, city.lower().replace(" ", "-"))
     encoded_movie = urllib.parse.quote(movie_title.lower().strip())
     encoded_city = urllib.parse.quote(clean_city)
-    today = datetime.now().strftime('%Y%m%d')
+    today = get_ist_now().strftime('%Y%m%d')
 
     if movie_slug and event_code and event_code.startswith('ET'):
         bms_direct = f"https://in.bookmyshow.com/buytickets/{movie_slug}-{clean_city}/movie-{clean_city}-{event_code}-MT/{today}"
@@ -1763,7 +1774,7 @@ def get_booking_details(movie_id, theatre_id=None, city="Mumbai", theatre_name=N
         return None
 
     clean_city = CITY_SLUGS.get(city, city.lower().replace(" ", "-"))
-    today = datetime.now().strftime('%Y%m%d')
+    today = get_ist_now().strftime('%Y%m%d')
     movie_slug = target.get("slug") or target["title"].lower().replace(" ", "-")
 
     # 1. Resolve target theatre

@@ -228,7 +228,7 @@ function renderMovieGrid(movies) {
           </div>
           <div class="timing-chips">
             ${firstTheatre.shows.slice(0, 3).map(s => `
-              <button class="timing-chip" onclick="openBookingPortalModal('${mov.id}', '${escapeHtml(firstTheatre.theatre_name)}', '${s.time}', '${s.format}', '${s.booking_url || ''}')" title="Click to book: ${s.format} - Silver ₹${s.silver}">
+              <button class="timing-chip" onclick="openBookingPortalModal('${mov.id}', '${escapeForJsAttr(firstTheatre.theatre_name)}', '${s.time}', '${s.format}', '${s.booking_url || ''}')" title="Click to book: ${s.format} - Silver ₹${s.silver}">
                 <span>${s.time}</span>
                 <span class="chip-price">₹${s.silver}</span>
               </button>
@@ -628,8 +628,17 @@ function filterCategory(cat) {
 }
 
 function onCityChange() {
+  const citySelect = document.getElementById('city-select');
+  if (citySelect) {
+    currentCity = citySelect.value;
+  }
+  // Clear cached comparison coordinates when switching city so new city default hub / GPS is used
+  currentCompareUserCoords = { lat: null, lng: null, name: '' };
+
   if (currentActiveTab === 'now_showing') {
     loadMovies();
+  } else if (currentActiveTab === 'upcoming') {
+    loadUpcomingMovies();
   }
 }
 
@@ -879,9 +888,9 @@ function renderComparisonTableBody() {
       <div class="compare-banner best-value-banner">
         <div>
           <strong>⭐ Best Value Deal:</strong> ${escapeHtml(topRow.theatre)} (${topRow.format}) at <strong>₹${topRow.silver_price}</strong>
-          <span class="banner-subtext">• 📍 ${topRow.distance_km} km away (Optimal balance of low ticket price & shortest commute)</span>
+          <span class="banner-subtext">• 📍 ${topRow.distance_km < 0.5 ? '< 0.5 km' : topRow.distance_km + ' km'} away (Optimal balance of low ticket price & shortest commute)</span>
         </div>
-        <button class="action-btn primary" style="font-size: 12px; padding: 6px 12px;" onclick="openBookingPortalModal('${currentMovieForCompare}', '${escapeHtml(topRow.theatre)}', '${topRow.time}', '${topRow.format}', '${topRow.booking_url || ''}')">
+        <button class="action-btn primary" style="font-size: 12px; padding: 6px 12px;" onclick="openBookingPortalModal('${currentMovieForCompare}', '${escapeForJsAttr(topRow.theatre)}', '${topRow.time}', '${topRow.format}', '${topRow.booking_url || ''}')">
           Book Best Value Show &rarr;
         </button>
       </div>
@@ -891,9 +900,9 @@ function renderComparisonTableBody() {
       <div class="compare-banner nearest-banner">
         <div>
           <strong>📍 Nearest Multiplex:</strong> ${escapeHtml(topRow.theatre)} (${topRow.format}) at <strong>₹${topRow.silver_price}</strong>
-          <span class="banner-subtext">• Only ${topRow.distance_km} km from you</span>
+          <span class="banner-subtext">• Only ${topRow.distance_km < 0.5 ? '< 0.5 km' : topRow.distance_km + ' km'} from you</span>
         </div>
-        <button class="action-btn primary" style="font-size: 12px; padding: 6px 12px;" onclick="openBookingPortalModal('${currentMovieForCompare}', '${escapeHtml(topRow.theatre)}', '${topRow.time}', '${topRow.format}', '${topRow.booking_url || ''}')">
+        <button class="action-btn primary" style="font-size: 12px; padding: 6px 12px;" onclick="openBookingPortalModal('${currentMovieForCompare}', '${escapeForJsAttr(topRow.theatre)}', '${topRow.time}', '${topRow.format}', '${topRow.booking_url || ''}')">
           Book Nearest Show &rarr;
         </button>
       </div>
@@ -903,9 +912,9 @@ function renderComparisonTableBody() {
       <div class="compare-banner cheapest-banner">
         <div>
           <strong>🏷️ Lowest Price Found:</strong> ${escapeHtml(topRow.theatre)} (${topRow.format}) at <strong>₹${topRow.silver_price}</strong>
-          <span class="banner-subtext">• 📍 ${topRow.distance_km} km away</span>
+          <span class="banner-subtext">• 📍 ${topRow.distance_km < 0.5 ? '< 0.5 km' : topRow.distance_km + ' km'} away</span>
         </div>
-        <button class="action-btn primary" style="font-size: 12px; padding: 6px 12px;" onclick="openBookingPortalModal('${currentMovieForCompare}', '${escapeHtml(topRow.theatre)}', '${topRow.time}', '${topRow.format}', '${topRow.booking_url || ''}')">
+        <button class="action-btn primary" style="font-size: 12px; padding: 6px 12px;" onclick="openBookingPortalModal('${currentMovieForCompare}', '${escapeForJsAttr(topRow.theatre)}', '${topRow.time}', '${topRow.format}', '${topRow.booking_url || ''}')">
           Book Lowest Price Show &rarr;
         </button>
       </div>
@@ -940,7 +949,7 @@ function renderComparisonTableBody() {
           </div>
         </td>
         <td class="compare-dist-cell">
-          <strong>${row.distance_km} km</strong>
+          <strong>${row.distance_km < 0.5 ? '< 0.5 km' : row.distance_km + ' km'}</strong>
           <span class="compare-dist-pill ${distPillClass}">${row.distance_km <= 5 ? 'Nearby' : (row.distance_km <= 15 ? 'Moderate' : 'Far')}</span>
         </td>
         <td><strong>${row.time}</strong></td>
@@ -954,7 +963,7 @@ function renderComparisonTableBody() {
           </span>
         </td>
         <td>
-          <button class="action-btn primary" style="padding: 4px 10px; font-size: 11px;" onclick="openBookingPortalModal('${currentMovieForCompare}', '${escapeHtml(row.theatre)}', '${row.time}', '${row.format}', '${row.booking_url || ''}')">
+          <button class="action-btn primary" style="padding: 4px 10px; font-size: 11px;" onclick="openBookingPortalModal('${currentMovieForCompare}', '${escapeForJsAttr(row.theatre)}', '${row.time}', '${row.format}', '${row.booking_url || ''}')">
             Book &rarr;
           </button>
         </td>
@@ -1322,6 +1331,16 @@ function escapeHtml(str) {
     .replace(/'/g, '&#039;');
 }
 
+function escapeForJsAttr(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/\\/g, '\\\\')
+    .replace(/'/g, "\\'")
+    .replace(/"/g, '&quot;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
 
 // Parse query parameters when loading /movies directly from landing links
 function parseUrlParameters() {
@@ -1657,7 +1676,7 @@ function renderPriceMatrixContent(data) {
               <span class="savings-pct">(${deal.savings_pct}% OFF PEAK EVENING)</span>
             </div>
             <p class="golden-deal-desc">
-              Book <strong>${escapeHtml(deal.movie_title)}</strong> at <strong>${escapeHtml(deal.theatre_name)}</strong> ${deal.distance_km != null ? `<span class="theatre-dist-badge">📍 ${deal.distance_km} km away</span>` : ''} during the <strong>${deal.time_window} (${deal.show_time})</strong> for only <strong>₹${deal.deal_price}</strong> instead of the ₹${deal.peak_avg_price} prime evening average.
+              Book <strong>${escapeHtml(deal.movie_title)}</strong> at <strong>${escapeHtml(deal.theatre_name)}</strong> ${deal.distance_km != null ? `<span class="theatre-dist-badge">📍 ${deal.distance_km < 0.5 ? '< 0.5 km' : deal.distance_km + ' km'} away</span>` : ''} during the <strong>${deal.time_window} (${deal.show_time})</strong> for only <strong>₹${deal.deal_price}</strong> instead of the ₹${deal.peak_avg_price} prime evening average.
             </p>
           </div>
           <div class="golden-deal-action">
@@ -1710,7 +1729,7 @@ function renderPriceMatrixContent(data) {
         <div class="cheapest-label">Cheapest in Slot:</div>
         <div class="cheapest-theatre" title="${escapeHtml(cheapest.theatre_name)}">${escapeHtml(cheapest.theatre_name)}</div>
         <div class="cheapest-meta">${cheapest.time} • ${cheapest.format}</div>
-        ${cheapest.distance_km != null ? `<div class="slot-dist-sub">📍 ${cheapest.distance_km} km away</div>` : ''}
+        ${cheapest.distance_km != null ? `<div class="slot-dist-sub">📍 ${cheapest.distance_km < 0.5 ? '< 0.5 km' : cheapest.distance_km + ' km'} away</div>` : ''}
         <a href="${cheapest.booking_url}" target="_blank" rel="noopener noreferrer" class="btn-book-slot">
           Book ₹${cheapest.silver} Show ↗
         </a>

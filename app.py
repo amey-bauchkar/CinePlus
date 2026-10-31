@@ -84,8 +84,8 @@ def api_upcoming():
 def api_comparison():
     movie_id = request.args.get('movie_id')
     city = request.args.get('city', 'Mumbai')
-    user_lat = request.args.get('user_lat', type=float)
-    user_lng = request.args.get('user_lng', type=float)
+    user_lat = request.args.get('user_lat', type=float) or request.args.get('lat', type=float)
+    user_lng = request.args.get('user_lng', type=float) or request.args.get('user_lon', type=float) or request.args.get('lng', type=float) or request.args.get('lon', type=float)
     sort_by = request.args.get('sort', 'cheapest')
     if not movie_id:
         return jsonify({"status": "error", "message": "movie_id is required"}), 400
@@ -230,8 +230,8 @@ def export_comparison():
 def api_price_matrix():
     city = request.args.get('city', 'Mumbai')
     movie_id = request.args.get('movie_id', None)
-    user_lat = request.args.get('user_lat', type=float)
-    user_lng = request.args.get('user_lng', type=float)
+    user_lat = request.args.get('user_lat', type=float) or request.args.get('lat', type=float)
+    user_lng = request.args.get('user_lng', type=float) or request.args.get('user_lon', type=float) or request.args.get('lng', type=float) or request.args.get('lon', type=float)
     matrix = get_price_matrix(city=city, movie_id=movie_id, user_lat=user_lat, user_lng=user_lng)
     if not matrix:
         return jsonify({"status": "error", "message": "No matrix data available for this selection"}), 404
