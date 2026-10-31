@@ -10,6 +10,9 @@ let currentUpcomingMovies = [];
 let currentCity = 'Mumbai';
 let activeCategory = 'all';
 let currentMovieForCompare = null;
+let userWalletCards = JSON.parse(localStorage.getItem('cineplus_wallet_cards') || '["icici_coral", "sbi_elite"]');
+let userTicketQty = parseInt(localStorage.getItem('cineplus_ticket_qty') || '2');
+let allSupportedCards = [];
 let currentActiveTab = 'now_showing'; // 'now_showing' | 'upcoming'
 let currentPage = 1;
 const MOVIES_PER_PAGE = 16;
@@ -737,6 +740,9 @@ async function openCompareModal(movieId) {
 
   try {
     let url = `/api/comparison?movie_id=${movieId}&city=${encodeURIComponent(currentCity)}&sort=${currentCompareSort || 'cheapest'}`;
+    if (userWalletCards && userWalletCards.length > 0) {
+      url += `&cards=${encodeURIComponent(userWalletCards.join(','))}&qty=${userTicketQty || 2}`;
+    }
     if (currentCompareUserCoords.lat && currentCompareUserCoords.lng) {
       url += `&user_lat=${currentCompareUserCoords.lat}&user_lng=${currentCompareUserCoords.lng}`;
     }
@@ -822,6 +828,23 @@ function renderComparisonModal(comp) {
 
     <!-- Dynamic Deal Banner -->
     <div id="compare-dynamic-banner"></div>
+
+    <!-- Wallet Matcher Offers Bar -->
+    <div class="compare-wallet-bar">
+      <div class="compare-wallet-info">
+        <span style="font-size: 18px;">💳</span>
+        <div>
+          <div class="wallet-active-title">
+            <strong>Active Card Offers:</strong> <span id="compare-wallet-cards-summary">${userWalletCards.length > 0 ? `${userWalletCards.length} Card(s) Applied` : 'None Selected'}</span>
+            <span class="wallet-party-pill">Party: ${userTicketQty || 2} Tickets</span>
+          </div>
+          <span class="wallet-subtext">Prices below factor in Buy-1-Get-1 & bank discounts for your party size</span>
+        </div>
+      </div>
+      <button class="compare-wallet-btn" type="button" onclick="openWalletModal()">
+        <span>⚙️ Edit Wallet Cards</span>
+      </button>
+    </div>
 
     <!-- Comparison Table -->
     <div class="comparison-table-wrapper">
@@ -968,7 +991,19 @@ function renderComparisonTableBody() {
         </td>
         <td><strong>${row.time}</strong></td>
         <td><span style="font-weight: 600;">${row.format}</span></td>
-        <td><strong>₹${row.silver_price}</strong></td>
+        <td>
+          ${row.wallet_deal && row.wallet_deal.has_offer ? `
+            <div class="effective-price-wrap">
+              <span class="effective-price">₹${row.effective_price}</span>
+              <span class="original-price-strike">₹${row.silver_price}</span>
+            </div>
+            <span class="card-deal-tag" title="${escapeHtml(row.wallet_deal.headline)}">
+              🎉 ${escapeHtml(row.wallet_deal.badge || 'Offer')} (-₹${row.savings_amount})
+            </span>
+          ` : `
+            <strong>₹${row.silver_price}</strong>
+          `}
+        </td>
         <td>₹${row.gold_price}</td>
         <td>₹${row.recliner_price}</td>
         <td>
@@ -1836,6 +1871,121 @@ function exportPriceMatrixCSV() {
 }
 
 
+// ==========================================================================
+// Wallet Matcher & Bank Card Offer Functions
+// ==========================================================================
+
+function loadWalletState() {
+  const countBadge = document.getElementById('wallet-badge-count');
+  if (countBadge) {
+    countBadge.textContent = userWalletCards.length;
+  }
+  const qtyDisp = document.getElementById('wallet-qty-display');
+  if (qtyDisp) {
+    qtyDisp.textContent = userTicketQty;
+  }
+}
+
+async function openWalletModal() {
+  const modal = document.getElementById('wallet-modal');
+  if (!modal) return;
+  modal.style.display = 'flex';
+  const qtyDisp = document.getElementById('wallet-qty-display');
+  if (qtyDisp) qtyDisp.textContent = userTicketQty;
+  await fetchAndRenderWalletCards();
+}
+
+function closeWalletModal() {
+  const modal = document.getElementById('wallet-modal');
+  if (modal) modal.style.display = 'none';
+}
+
+async function fetchAndRenderWalletCards() {
+  const container = document.getElementById('wallet-cards-list');
+  if (!container) return;
+
+  try {
+    if (allSupportedCards.length === 0) {
+      const res = await fetch('/api/wallet/cards');
+      const data = await res.json();
+      allSupportedCards = data.cards || [];
+    }
+
+    container.innerHTML = allSupportedCards.map(c => {
+      const isSelected = userWalletCards.includes(c.id);
+      return `
+        <div class="wallet-card-chip ${isSelected ? 'selected' : ''}" onclick="toggleWalletCard('${c.id}')" id="card-chip-${c.id}">
+          <input type="checkbox" class="wallet-card-checkbox" ${isSelected ? 'checked' : ''} onclick="event.stopPropagation(); toggleWalletCard('${c.id}')">
+          <div class="wallet-card-content">
+            <div class="wallet-card-top">
+              <span class="wallet-card-bank">${escapeHtml(c.bank)}</span>
+              <span class="wallet-card-badge">${escapeHtml(c.badge)}</span>
+            </div>
+            <div class="wallet-card-name">${escapeHtml(c.name)}</div>
+            <div class="wallet-card-headline">${escapeHtml(c.headline)}</div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  } catch (err) {
+    container.innerHTML = '<div style="color: red; padding: 20px; text-align: center;">Error loading bank cards.</div>';
+  }
+}
+
+function toggleWalletCard(cardId) {
+  const idx = userWalletCards.indexOf(cardId);
+  if (idx > -1) {
+    userWalletCards.splice(idx, 1);
+  } else {
+    userWalletCards.push(cardId);
+  }
+
+  const chip = document.getElementById(`card-chip-${cardId}`);
+  if (chip) {
+    const isNowSel = userWalletCards.includes(cardId);
+    chip.classList.toggle('selected', isNowSel);
+    const cb = chip.querySelector('input[type="checkbox"]');
+    if (cb) cb.checked = isNowSel;
+  }
+}
+
+function adjustWalletQty(delta) {
+  userTicketQty = Math.max(1, Math.min(8, userTicketQty + delta));
+  const qtyDisp = document.getElementById('wallet-qty-display');
+  if (qtyDisp) qtyDisp.textContent = userTicketQty;
+}
+
+function toggleAllWalletCards() {
+  if (userWalletCards.length === allSupportedCards.length) {
+    userWalletCards = [];
+  } else {
+    userWalletCards = allSupportedCards.map(c => c.id);
+  }
+  fetchAndRenderWalletCards();
+}
+
+function resetWalletCards() {
+  userWalletCards = [];
+  localStorage.setItem('cineplus_wallet_cards', JSON.stringify([]));
+  loadWalletState();
+  fetchAndRenderWalletCards();
+}
+
+function saveAndApplyWallet() {
+  localStorage.setItem('cineplus_wallet_cards', JSON.stringify(userWalletCards));
+  localStorage.setItem('cineplus_ticket_qty', userTicketQty.toString());
+  loadWalletState();
+  closeWalletModal();
+
+  showToast(`💳 Saved ${userWalletCards.length} Cards in Wallet (${userTicketQty} Tickets Party)`, 'drop');
+
+  // If comparison modal is currently visible, refresh it with new card offers
+  const compModal = document.getElementById('compare-modal');
+  if (compModal && compModal.style.display === 'flex' && currentMovieForCompare) {
+    openCompareModal(currentMovieForCompare);
+  }
+}
+
 // Global modal accessibility & keyboard shortcuts
 window.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
@@ -1844,12 +1994,14 @@ window.addEventListener('keydown', (e) => {
     closePriceMatrixModal();
     closeBookingPortalModal();
     closeAlertsModal();
+    closeWalletModal();
   }
 });
 
 // Close modal when user clicks on dark backdrop outside modal card
 document.addEventListener('DOMContentLoaded', () => {
-  const modalIds = ['trailer-modal', 'compare-modal', 'price-matrix-modal', 'booking-portal-modal', 'alerts-modal'];
+  loadWalletState();
+  const modalIds = ['trailer-modal', 'compare-modal', 'price-matrix-modal', 'booking-portal-modal', 'alerts-modal', 'wallet-modal'];
   modalIds.forEach(id => {
     const el = document.getElementById(id);
     if (el) {
@@ -1860,6 +2012,7 @@ document.addEventListener('DOMContentLoaded', () => {
           else if (id === 'price-matrix-modal') closePriceMatrixModal();
           else if (id === 'booking-portal-modal') closeBookingPortalModal();
           else if (id === 'alerts-modal') closeAlertsModal();
+          else if (id === 'wallet-modal') closeWalletModal();
         }
       });
     }

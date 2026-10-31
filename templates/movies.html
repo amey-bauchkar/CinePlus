@@ -81,6 +81,15 @@
           <span class="nav-badge" id="alert-badge-count">0</span>
         </a>
 
+        <a href="javascript:void(0)" class="nav-link" id="nav-wallet" onclick="openWalletModal()">
+          <svg class="nav-link-svg" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="5" width="20" height="14" rx="2"/>
+            <line x1="2" y1="10" x2="22" y2="10"/>
+          </svg>
+          <span style="white-space: nowrap;">My&nbsp;Cards</span>
+          <span class="nav-badge" id="wallet-badge-count" style="background: rgba(255, 84, 0, 0.2); color: #ff5400;">0</span>
+        </a>
+
         <a href="javascript:void(0)" class="nav-link" onclick="exportDataCSV()">
           <svg class="nav-link-svg" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
@@ -487,6 +496,52 @@
       <div class="modal-footer">
         <button class="action-btn secondary" onclick="exportComparisonCSV()">Export Matrix CSV</button>
         <button class="action-btn primary" onclick="closeCompareModal()">Close Matrix</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bank Card & Wallet Matcher Modal -->
+  <div id="wallet-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-card wallet-modal-card" style="max-width: 680px; width: 95vw;">
+      <div class="modal-header">
+        <div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span class="badge" style="background: rgba(255, 84, 0, 0.15); color: #ff5400; border: 1px solid rgba(255, 84, 0, 0.3);">CARD ARBITRAGE</span>
+            <h2 class="modal-title">My Cards & Offers Wallet</h2>
+          </div>
+          <p class="modal-subtitle">Select the cards in your wallet. CinePlus automatically calculates Buy-1-Get-1 (BOGO) & bank offers to show your true out-of-pocket ticket price.</p>
+        </div>
+        <button class="modal-close-btn" onclick="closeWalletModal()">×</button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Ticket Quantity Selector for BOGO Math -->
+        <div class="wallet-qty-bar">
+          <div class="wallet-qty-label">
+            <strong>Party Size (Ticket Count):</strong>
+            <span class="wallet-qty-hint">Buy-1-Get-1 (BOGO) requires at least 2 tickets</span>
+          </div>
+          <div class="wallet-qty-stepper">
+            <button class="qty-btn" type="button" onclick="adjustWalletQty(-1)">−</button>
+            <span id="wallet-qty-display" class="qty-val">2</span>
+            <button class="qty-btn" type="button" onclick="adjustWalletQty(1)">+</button>
+          </div>
+        </div>
+
+        <!-- Cards Selection Grid -->
+        <div class="wallet-cards-header">
+          <span>POPULAR CINEMA CREDIT / DEBIT CARDS</span>
+          <button class="wallet-select-all-btn" type="button" onclick="toggleAllWalletCards()">Select All / None</button>
+        </div>
+        <div id="wallet-cards-list" class="wallet-cards-grid">
+          <!-- Injected dynamically via JS from /api/wallet/cards -->
+          <div style="text-align: center; padding: 24px; color: var(--color-olive-muted);">Loading supported card offers...</div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="action-btn secondary" type="button" onclick="resetWalletCards()">Clear Cards</button>
+        <button class="action-btn primary" type="button" onclick="saveAndApplyWallet()">Save & Apply Offers</button>
       </div>
     </div>
   </div>

@@ -3416,3 +3416,285 @@ button, input, select {
   background-color: #1a1a1a;
   box-shadow: 0 12px 32px rgba(2, 132, 199, 0.35), 3px 3px 0px #0284c7;
 }
+
+
+/* ==========================================================================
+   Wallet Matcher & Bank Card Offer Intelligence Styling
+   ========================================================================== */
+
+/* Wallet Party Stepper Bar */
+.wallet-qty-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: rgba(255, 84, 0, 0.06);
+  border: 1px solid rgba(255, 84, 0, 0.25);
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+
+.wallet-qty-label {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.wallet-qty-label strong {
+  font-family: var(--font-primary);
+  font-size: 15px;
+  color: var(--color-ink-primary, #ffffff);
+}
+
+.wallet-qty-hint {
+  font-family: var(--font-secondary);
+  font-size: 12px;
+  color: var(--color-olive-muted, #9ca3af);
+}
+
+.wallet-qty-stepper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #111111;
+  border: 1px solid #333333;
+  border-radius: 8px;
+  padding: 4px 8px;
+}
+
+.wallet-qty-stepper .qty-btn {
+  background: #222222;
+  color: #ffffff;
+  border: 1px solid #444444;
+  border-radius: 6px;
+  width: 32px;
+  height: 32px;
+  font-size: 18px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.wallet-qty-stepper .qty-btn:hover {
+  background: var(--brand-primary, #ff5400);
+  border-color: var(--brand-primary, #ff5400);
+}
+
+.wallet-qty-stepper .qty-val {
+  font-family: var(--font-primary);
+  font-size: 18px;
+  font-weight: 700;
+  color: #ffffff;
+  min-width: 24px;
+  text-align: center;
+}
+
+/* Wallet Cards Header & Grid */
+.wallet-cards-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  font-family: var(--font-primary);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--color-olive-muted, #9ca3af);
+}
+
+.wallet-select-all-btn {
+  background: none;
+  border: none;
+  color: var(--brand-primary, #ff5400);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+}
+
+.wallet-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+  max-height: 360px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.wallet-card-chip {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px;
+  background: #141414;
+  border: 1.5px solid #282828;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.wallet-card-chip:hover {
+  border-color: rgba(255, 84, 0, 0.5);
+  background: #1c1c1c;
+}
+
+.wallet-card-chip.selected {
+  background: rgba(255, 84, 0, 0.08);
+  border-color: var(--brand-primary, #ff5400);
+  box-shadow: 0 4px 16px rgba(255, 84, 0, 0.12);
+}
+
+.wallet-card-checkbox {
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  accent-color: var(--brand-primary, #ff5400);
+  cursor: pointer;
+}
+
+.wallet-card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+}
+
+.wallet-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.wallet-card-bank {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--color-olive-muted, #888888);
+  text-transform: uppercase;
+}
+
+.wallet-card-badge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(255, 84, 0, 0.18);
+  color: var(--brand-primary, #ff5400);
+}
+
+.wallet-card-name {
+  font-family: var(--font-primary);
+  font-size: 13px;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1.25;
+}
+
+.wallet-card-headline {
+  font-family: var(--font-secondary);
+  font-size: 11px;
+  color: #a3e635;
+  margin-top: 2px;
+  font-weight: 500;
+}
+
+/* Comparison Modal Wallet Bar */
+.compare-wallet-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: linear-gradient(90deg, rgba(255, 84, 0, 0.12) 0%, rgba(20, 20, 20, 0.8) 100%);
+  border: 1px solid rgba(255, 84, 0, 0.3);
+  border-radius: 10px;
+  padding: 10px 16px;
+  margin-bottom: 16px;
+}
+
+.compare-wallet-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.wallet-active-title {
+  font-family: var(--font-primary);
+  font-size: 13px;
+  color: #ffffff;
+}
+
+.wallet-party-pill {
+  display: inline-block;
+  background: #222222;
+  border: 1px solid #444444;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 4px;
+  margin-left: 6px;
+  color: #ff5400;
+}
+
+.wallet-subtext {
+  font-family: var(--font-secondary);
+  font-size: 11px;
+  color: var(--color-olive-muted, #9ca3af);
+  display: block;
+}
+
+.compare-wallet-btn {
+  background: #1c1c1c;
+  color: #ffffff;
+  border: 1px solid #444444;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.compare-wallet-btn:hover {
+  background: var(--brand-primary, #ff5400);
+  border-color: var(--brand-primary, #ff5400);
+}
+
+/* Effective Price Cell */
+.effective-price-wrap {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.effective-price {
+  font-family: var(--font-primary);
+  font-size: 15px;
+  font-weight: 800;
+  color: #a3e635; /* High contrast green for discounted rate */
+}
+
+.original-price-strike {
+  font-size: 11px;
+  text-decoration: line-through;
+  color: #71717a;
+}
+
+.card-deal-tag {
+  display: inline-block;
+  font-family: var(--font-secondary);
+  font-size: 10px;
+  font-weight: 700;
+  color: #ff5400;
+  background: rgba(255, 84, 0, 0.12);
+  border-radius: 4px;
+  padding: 1px 5px;
+  margin-top: 2px;
+  white-space: nowrap;
+}
