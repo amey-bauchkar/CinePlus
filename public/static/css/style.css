@@ -1,0 +1,3418 @@
+/* 
+  ==========================================================================
+  TWO26 STUDIO DESIGN SYSTEM & UI REVAMP FOR CINEPLUS
+  Directly Extracted & Scraped from https://two26.studio/
+  
+  Typography:
+    - Display / Headings: 'Mdnichrometest' (Bold 700) & 'Mdnichrometest Dark' (400)
+    - Body / Subheads / UI: 'Neuemontreal' (Medium 500 & Regular 400)
+  
+  Color Palette:
+    - Brand Primary:   #ff5400 (Signature Electric Orange)
+    - Brand Black:     #000000 (Crisp Jet Black)
+    - Brand White:     #fdf8f5 (Warm Linen Porcelain Canvas)
+    - Brand Secondary: #f8eee8 (Soft Warm Peach / Cream Surface)
+    - Brand Accent:    #f9e2e1 (Delicate Blush Pink)
+    - Brand Hero Top:  #fae3e2 (Hero Gradient Start)
+  ==========================================================================
+*/
+
+/* --------------------------------------------------------------------------
+   1. @FONT-FACE DEFINITIONS (Exact Two26 Studio Typography)
+   -------------------------------------------------------------------------- */
+@font-face {
+  font-family: 'Mdnichrometest';
+  src: url('/static/fonts/MDNichromeTest-Bold.woff') format('woff'),
+       url('https://cdn.prod.website-files.com/6aaad679fdb9d914f7f52049/6aaad679fdb9d914f7f52051_MDNichromeTest-Bold.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Mdnichrometest Dark';
+  src: url('/static/fonts/MDNichromeTest-Dark.woff') format('woff'),
+       url('https://cdn.prod.website-files.com/6aaad679fdb9d914f7f52049/6aaad679fdb9d914f7f52052_MDNichromeTest-Dark.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Neuemontreal';
+  src: url('/static/fonts/NeueMontreal-Medium.otf') format('opentype'),
+       url('https://cdn.prod.website-files.com/6aaad679fdb9d914f7f52049/6aaad679fdb9d914f7f52054_NeueMontreal-Medium.otf') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Neuemontreal';
+  src: url('/static/fonts/NeueMontreal-Regular.otf') format('opentype'),
+       url('https://cdn.prod.website-files.com/6aaad679fdb9d914f7f52049/6aaad679fdb9d914f7f52053_NeueMontreal-Regular.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* --------------------------------------------------------------------------
+   2. ROOT TOKENS & SYSTEM VARIABLES
+   -------------------------------------------------------------------------- */
+:root {
+  /* Exact Two26 Studio Design Tokens */
+  --brand-primary: #ff5400;
+  --brand-primary-hover: #e04a00;
+  --brand-primary-rgb: 255, 84, 0;
+  --brand-orange: #ff5400;
+  --brand-orange-hover: #e04a00;
+  --brand-black: #000000;
+  --brand-white: #fdf8f5;
+  --brand-secondary: #f8eee8;
+  --brand-accent: #f9e2e1;
+  --brand-purple: #000000;
+  --brand-hero-bg: #f7e5e0;
+  --brand-hero-gradient: linear-gradient(180deg, #f7e5e0 73%, #f8eee8);
+  --landing-top-offset: 94px;
+
+  /* Typography Families */
+  --font-primary: 'Mdnichrometest', Impact, -apple-system, sans-serif;
+  --font-primary-dark: "Mdnichrometest Dark", 'Mdnichrometest', Impact, -apple-system, sans-serif;
+  --font-secondary: 'Neuemontreal', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+
+  /* Semantic UI Tokens */
+  --color-bg-canvas: var(--brand-white);
+  --color-surface-card: #ffffff;
+  --color-surface-elevated: var(--brand-secondary);
+  --color-surface-blush: var(--brand-accent);
+  --color-text-main: var(--brand-black);
+  --color-text-muted: rgba(0, 0, 0, 0.62);
+  --color-border-main: var(--brand-black);
+  --color-border-subtle: rgba(0, 0, 0, 0.12);
+  --color-border-hairline: rgba(0, 0, 0, 0.08);
+
+  /* Full Compatibility Aliases with Previous Codebase */
+  --color-soft-white: var(--brand-white);
+  --color-sage-green: var(--brand-primary);
+  --color-deep-olive: var(--brand-black);
+  --color-olive-muted: var(--color-text-muted);
+  --color-olive-light: rgba(0, 0, 0, 0.04);
+  --color-olive-hover: #1f1f1f;
+  --color-sage-light: var(--brand-accent);
+  --color-sage-border: var(--brand-primary);
+  --color-sage-hover: var(--brand-primary-hover);
+  --color-border-grid: var(--color-border-subtle);
+
+  --font-display: var(--font-primary-dark);
+  --font-body: var(--font-secondary);
+
+  /* Border Radii */
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --radius-pill: 100px;
+
+  /* Shadows */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 18px 44px rgba(0, 0, 0, 0.10);
+  --shadow-pop: 3px 3px 0px var(--brand-black);
+
+  /* Motion */
+  --transition: all 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-bounce: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* --------------------------------------------------------------------------
+   3. BASE RESET & ARCHITECTURAL FOUNDATION
+   -------------------------------------------------------------------------- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--font-secondary);
+  background-color: var(--color-bg-canvas);
+  color: var(--color-text-main);
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+::selection {
+  background-color: var(--brand-primary);
+  color: #ffffff;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button, input, select {
+  font-family: inherit;
+}
+
+/* --------------------------------------------------------------------------
+   4. TOP ANNOUNCEMENT BAR (Two26 Sleek High-Contrast Strip)
+   -------------------------------------------------------------------------- */
+.announcement-bar {
+  background-color: var(--brand-black);
+  color: var(--brand-white);
+  font-family: var(--font-secondary);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 10px 24px;
+  border-bottom: 1.5px solid var(--brand-black);
+}
+
+.announcement-content {
+  max-width: 1440px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  text-align: center;
+}
+
+.announcement-content strong {
+  color: var(--brand-primary);
+}
+
+.announcement-content a {
+  color: var(--brand-accent);
+  font-weight: 600;
+  text-decoration: none;
+  background-color: rgba(255, 255, 255, 0.08);
+  padding: 2px 10px;
+  border-radius: var(--radius-pill);
+  transition: var(--transition);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.announcement-content a:hover {
+  background-color: var(--brand-primary);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+/* --------------------------------------------------------------------------
+   5. PRIMARY NAVBAR (Two26 Capsule Pill Nav & Clean Architectural Header)
+   -------------------------------------------------------------------------- */
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background-color: rgba(253, 248, 245, 0.94);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1.5px solid var(--brand-black);
+}
+
+.nav-container {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 24px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+/* Brand Wordmark with Two26 Display Font & Orange Spark */
+.brand-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: var(--brand-black);
+  transition: var(--transition);
+}
+
+.brand-img-logo {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--brand-black);
+  box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.2);
+  transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+  display: block;
+}
+
+.brand-logo:hover .brand-img-logo {
+  transform: rotate(90deg) scale(1.1);
+  box-shadow: 3px 3px 0px var(--brand-primary);
+}
+
+.brand-svg-mark {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-pill);
+  background-color: var(--brand-black);
+  color: var(--brand-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+  box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.15);
+}
+
+.brand-logo:hover .brand-svg-mark {
+  background-color: var(--brand-primary);
+  color: #ffffff;
+  transform: rotate(-10deg) scale(1.05);
+}
+
+.brand-text {
+  font-family: var(--font-primary-dark);
+  font-size: 1.45rem;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--brand-black);
+}
+
+.brand-text strong {
+  color: var(--brand-primary);
+  margin-left: 2px;
+}
+
+/* Nav Center Links - Two26 Capsule Pill Buttons (Strict Single Line) */
+.nav-center {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.nav-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 13px;
+  border-radius: var(--radius-pill);
+  border: 1.5px solid transparent;
+  background-color: transparent;
+  color: var(--brand-black);
+  font-family: var(--font-secondary);
+  font-size: 0.82rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  transition: var(--transition);
+  position: relative;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.nav-link span {
+  white-space: nowrap;
+  display: inline-block;
+}
+
+.nav-link:hover {
+  background-color: var(--brand-secondary);
+  border-color: var(--brand-black);
+  transform: translateY(-1px);
+}
+
+.nav-link.active {
+  background-color: var(--brand-black);
+  color: var(--brand-white);
+  border-color: var(--brand-black);
+  box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.2);
+}
+
+.nav-link-svg {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  stroke: currentColor;
+}
+
+.nav-badge {
+  background-color: var(--brand-primary);
+  color: #ffffff;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  padding: 2px 7px;
+  border-radius: var(--radius-pill);
+  margin-left: 2px;
+}
+
+.nav-link.active .nav-badge {
+  background-color: var(--brand-accent);
+  color: var(--brand-black);
+}
+
+/* Nav Right Utilities */
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+/* Two26 Capsule City Selector */
+.city-selector-dropdown {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background-color: var(--brand-white);
+  border: 1.5px solid var(--brand-black);
+  border-radius: var(--radius-pill);
+  padding: 0 14px 0 12px;
+  height: 38px;
+  transition: var(--transition);
+}
+
+.city-selector-dropdown:hover {
+  background-color: var(--brand-secondary);
+  box-shadow: 2px 2px 0px var(--brand-black);
+}
+
+.city-selector-dropdown select {
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--brand-black);
+  font-family: var(--font-secondary);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0 20px 0 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.city-selector-dropdown .nav-icon {
+  color: var(--brand-primary);
+  flex-shrink: 0;
+}
+
+.city-selector-dropdown .chevron-icon {
+  position: absolute;
+  right: 12px;
+  pointer-events: none;
+  color: var(--brand-black);
+}
+
+/* Two26 Capsule Search Box */
+.nav-search-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background-color: var(--brand-white);
+  border: 1.5px solid var(--brand-black);
+  border-radius: var(--radius-pill);
+  padding: 0 16px 0 14px;
+  height: 38px;
+  width: 185px;
+  transition: var(--transition);
+}
+
+.nav-search-box:focus-within {
+  width: 230px;
+  border-color: var(--brand-primary);
+  box-shadow: 2px 2px 0px var(--brand-black);
+}
+
+.nav-search-box .search-icon {
+  color: var(--brand-black);
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
+.nav-search-box input {
+  border: none;
+  background: transparent;
+  outline: none;
+  color: var(--brand-black);
+  font-family: var(--font-secondary);
+  font-size: 0.85rem;
+  width: 100%;
+}
+
+.nav-search-box input::placeholder {
+  color: rgba(0, 0, 0, 0.45);
+}
+
+/* Icon Buttons in Two26 Capsule Style */
+.icon-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-pill);
+  border: 1.5px solid var(--brand-black);
+  background-color: var(--brand-white);
+  color: var(--brand-black);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--transition);
+  position: relative;
+}
+
+.icon-btn:hover {
+  background-color: var(--brand-primary);
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 2px 2px 0px var(--brand-black);
+}
+
+.dot-indicator {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 9px;
+  height: 9px;
+  background-color: var(--brand-primary);
+  border: 2px solid var(--brand-white);
+  border-radius: var(--radius-pill);
+}
+
+/* --------------------------------------------------------------------------
+   6. HERO SECTION (Viewport Locked 100vh Initial Fold)
+   -------------------------------------------------------------------------- */
+.landing-hero-viewport {
+  width: 100%;
+  height: calc(100vh - var(--landing-top-offset, 94px));
+  height: calc(100dvh - var(--landing-top-offset, 94px));
+  min-height: 460px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.editorial-hero-showcase {
+  position: relative;
+  width: 100%;
+  flex: 1 1 auto;
+  min-height: 0;
+  background-color: var(--brand-hero-bg);
+  background-image: var(--brand-hero-gradient);
+  border-bottom: 1.5px solid var(--brand-black);
+  padding: clamp(8px, 1.2vh, 16px) 24px clamp(6px, 0.9vh, 10px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* 3-Column Split Container: Large Left Text + Prominent Center 3D Animation + Bold Right Text */
+.hero-split-container {
+  width: 100%;
+  max-width: 1680px;
+  margin: 0 auto;
+  flex: 1 1 auto;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) auto minmax(180px, 1fr);
+  align-items: center;
+  justify-content: center;
+  gap: clamp(16px, 2.8vw, 52px);
+  padding: clamp(4px, 1vh, 14px) clamp(12px, 2vw, 32px);
+  position: relative;
+  z-index: 5;
+}
+
+/* Left Column: Design for a calmer (Big, bold & prominent) */
+.hero-split-left {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  text-align: right;
+}
+
+.hero-split-pill {
+  display: inline-flex;
+  align-items: center;
+  background-color: var(--brand-black);
+  color: var(--brand-accent);
+  font-family: var(--font-secondary);
+  font-size: clamp(0.82rem, 1.0vw, 1.02rem);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 7px 18px;
+  border-radius: var(--radius-pill);
+  margin-bottom: 14px;
+  box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.18);
+  white-space: nowrap;
+}
+
+.hero-split-heading {
+  font-family: var(--font-primary-dark);
+  color: var(--brand-black);
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.hero-split-heading.left-heading {
+  font-size: clamp(2.2rem, 3.8vw, 4.2rem);
+  line-height: 88%;
+  letter-spacing: -0.03em;
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* Center Column: 3D Video Frame (Big & scaled to comfortably fill hero showcase) */
+.hero-split-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  max-height: min(480px, 54vh);
+  aspect-ratio: 16 / 9;
+  width: auto;
+  max-width: 100%;
+  position: relative;
+  flex-shrink: 1;
+}
+
+.hero-video-frame {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  mix-blend-mode: darken;
+  pointer-events: none;
+}
+
+.hero-split-video {
+  width: 100%;
+  height: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+/* Right Column: Cinema (Massive display typography) */
+.hero-split-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  text-align: left;
+}
+
+.hero-split-heading.right-heading {
+  font-size: clamp(3.8rem, 6.8vw, 7.8rem);
+  line-height: 82%;
+  letter-spacing: -0.035em;
+  text-align: left;
+  margin-bottom: 14px;
+  white-space: nowrap;
+}
+
+.hero-split-pill.right-pill {
+  background-color: var(--brand-primary);
+  color: #ffffff;
+  border: 1.8px solid var(--brand-black);
+  box-shadow: 2.5px 2.5px 0px var(--brand-black);
+  font-size: clamp(0.82rem, 1.0vw, 1.02rem);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  padding: 7px 18px;
+  white-space: nowrap;
+}
+
+/* Two26 Flowing Marquee Ribbon Below Hero */
+.two26-marquee-strip {
+  width: 100%;
+  flex: 0 0 auto;
+  background-color: var(--brand-primary);
+  color: #ffffff;
+  padding: clamp(7px, 1vh, 12px) 0;
+  border-top: none;
+  border-bottom: 1.5px solid var(--brand-black);
+  overflow: hidden;
+  position: relative;
+  z-index: 6;
+  box-sizing: border-box;
+}
+
+.two26-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: two26Marquee 28s linear infinite;
+}
+
+.two26-marquee-content {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  padding-right: 28px;
+  font-family: var(--font-primary-dark);
+  font-size: clamp(1.06rem, 1.35vw, 1.3rem);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.two26-marquee-content span.bullet {
+  color: var(--brand-accent);
+  font-size: 1.2rem;
+}
+
+@keyframes two26Marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* Hero Bottom Bar */
+.hero-bottom-bar {
+  width: 100%;
+  max-width: 1680px;
+  flex: 0 0 auto;
+  margin-top: clamp(2px, 0.5vh, 6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 7;
+  padding-top: clamp(4px, 0.6vh, 8px);
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.hero-pagination {
+  font-family: var(--font-secondary);
+  font-size: clamp(0.85rem, 1vw, 1.05rem);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--brand-black);
+}
+
+.hero-scroll-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-pill);
+  background-color: var(--brand-white);
+  border: 1.5px solid var(--brand-black);
+  color: var(--brand-black);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition-bounce);
+  cursor: pointer;
+  box-shadow: 2px 2px 0px var(--brand-black);
+}
+
+.hero-scroll-btn:hover {
+  background-color: var(--brand-primary);
+  color: #ffffff;
+  transform: translateY(3px);
+  box-shadow: 0px 0px 0px var(--brand-black);
+}
+
+.hero-region-label {
+  font-family: var(--font-secondary);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--brand-black);
+}
+
+/* --------------------------------------------------------------------------
+   7. CATEGORY ICON BAR (Two26 Pill Format Selector)
+   -------------------------------------------------------------------------- */
+.category-icon-bar {
+  background-color: var(--brand-white);
+  border-bottom: 1.5px solid var(--brand-black);
+  padding: 14px 32px;
+  position: sticky;
+  top: 60px;
+  z-index: 900;
+}
+
+.category-container {
+  max-width: 1440px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: none;
+}
+
+.category-container::-webkit-scrollbar {
+  display: none;
+}
+
+.cat-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background-color: var(--brand-white);
+  border: 1.5px solid var(--brand-black);
+  border-radius: var(--radius-pill);
+  padding: 8px 18px;
+  color: var(--brand-black);
+  font-family: var(--font-secondary);
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  transition: var(--transition);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.cat-item:hover {
+  background-color: var(--brand-secondary);
+  transform: translateY(-2px);
+  box-shadow: 2px 2px 0px var(--brand-black);
+}
+
+.cat-item.active {
+  background-color: var(--brand-primary);
+  color: #ffffff;
+  border-color: var(--brand-black);
+  transform: translateY(-2px);
+  box-shadow: 3px 3px 0px var(--brand-black);
+}
+
+.cat-item.active .cat-icon svg {
+  stroke: #ffffff;
+}
+
+.cat-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cat-icon svg {
+  width: 18px;
+  height: 18px;
+  stroke: currentColor;
+}
+
+/* --------------------------------------------------------------------------
+   8. MAIN LAYOUT: SIDEBAR FILTERS & PRODUCTS SHOWCASE
+   -------------------------------------------------------------------------- */
+.main-layout {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 40px 32px 80px;
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 36px;
+  align-items: start;
+}
+
+/* Left Sidebar Filters (Two26 Framed Porcelain Container) */
+.sidebar-filters {
+  background-color: var(--brand-white);
+  border: 1.5px solid var(--brand-black);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: 3px 3px 0px var(--brand-black);
+  position: sticky;
+  top: 154px;
+}
+
+.filter-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 16px;
+  border-bottom: 1.5px solid var(--brand-black);
+  margin-bottom: 20px;
+}
+
+.filter-header h3 {
+  font-family: var(--font-primary-dark);
+  font-size: 1.6rem;
+  line-height: 85%;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  color: var(--brand-black);
+}
+
+.reset-link {
+  background: none;
+  border: none;
+  color: var(--brand-primary);
+  font-family: var(--font-secondary);
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: var(--transition);
+  padding: 2px 6px;
+}
+
+.reset-link:hover {
+  color: var(--brand-black);
+  text-decoration: underline;
+}
+
+.filter-group {
+  margin-bottom: 24px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.filter-group:last-of-type {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.filter-title {
+  font-family: var(--font-primary-dark);
+  font-size: 1.15rem;
+  line-height: 90%;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  color: var(--brand-black);
+  margin-bottom: 14px;
+}
+
+/* Two26 Custom Checkbox & Radio Labels */
+.filter-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-secondary);
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--brand-black);
+  margin-bottom: 10px;
+  cursor: pointer;
+  user-select: none;
+  transition: var(--transition);
+}
+
+.filter-checkbox-label:hover {
+  color: var(--brand-primary);
+}
+
+.filter-checkbox-label input[type="checkbox"],
+.filter-checkbox-label input[type="radio"] {
+  accent-color: var(--brand-primary);
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+/* Two26 Pill Tags in Sidebar */
+.tag-red, .tag-orange {
+  margin-left: auto;
+  background-color: var(--brand-accent);
+  color: var(--brand-black);
+  border: 1px solid var(--brand-black);
+  font-family: var(--font-secondary);
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+}
+
+/* Quick Actions Box in Sidebar */
+.quick-actions-card {
+  background-color: var(--brand-secondary);
+  border: 1.5px solid var(--brand-black);
+  border-radius: var(--radius-md);
+  padding: 18px;
+  margin-top: 20px;
+}
+
+.quick-actions-card h4 {
+  font-family: var(--font-primary-dark);
+  font-size: 1.15rem;
+  line-height: 90%;
+  text-transform: uppercase;
+  color: var(--brand-black);
+}
+
+/* --------------------------------------------------------------------------
+   9. PRODUCTS SHOWCASE & MOVIE CARDS GRID
+   -------------------------------------------------------------------------- */
+.products-showcase {
+  width: 100%;
+}
+
+.showcase-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1.5px solid var(--brand-black);
+}
+
+.results-count {
+  font-family: var(--font-primary-dark);
+  font-size: 1.35rem;
+  line-height: 90%;
+  text-transform: uppercase;
+  color: var(--brand-black);
+}
+
+.rank-by-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.rank-label {
+  font-family: var(--font-secondary);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--brand-black);
+}
+
+.rank-by-wrapper select {
+  background-color: var(--brand-white);
+  border: 1.5px solid var(--brand-black);
+  border-radius: var(--radius-pill);
+  padding: 6px 14px;
+  font-family: var(--font-secondary);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--brand-black);
+  cursor: pointer;
+  outline: none;
+  transition: var(--transition);
+}
+
+.rank-by-wrapper select:hover {
+  background-color: var(--brand-secondary);
+  box-shadow: 2px 2px 0px var(--brand-black);
+}
+
+/* Movie Cards Grid */
+.movie-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 28px;
+}
+
+/* Two26 Movie Card Design */
+.movie-card {
+  background-color: var(--brand-white);
+  border: 1.5px solid var(--brand-black);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: var(--transition);
+  box-shadow: 3px 3px 0px var(--brand-black);
+}
+
+.movie-card:hover {
+  transform: translateY(-5px);
+  border-color: var(--brand-primary);
+  box-shadow: 6px 6px 0px var(--brand-black);
+}
+
+/* Card Badge (Two26 Angled or Capsule Pill) */
+.card-badge {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 5;
+  background-color: var(--brand-black);
+  color: var(--brand-accent);
+  font-family: var(--font-secondary);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 4px 12px;
+  border-radius: var(--radius-pill);
+  box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.2);
+}
+
+.upcoming-release-badge {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 5;
+  background-color: var(--brand-primary);
+  color: #ffffff;
+  border: 1px solid var(--brand-black);
+  font-family: var(--font-secondary);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  box-shadow: 2px 2px 0px var(--brand-black);
+}
+
+/* Card Poster Container */
+.card-poster-container {
+  width: 100%;
+  height: 240px;
+  overflow: hidden;
+  background-color: var(--brand-secondary);
+  border-bottom: 1.5px solid var(--brand-black);
+  position: relative;
+}
+
+.card-poster {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.movie-card:hover .card-poster {
+  transform: scale(1.04);
+}
+
+/* Card Content Details */
+.card-info {
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.card-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-secondary);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-text-muted);
+  margin-bottom: 8px;
+}
+
+.meta-rating {
+  color: var(--brand-black);
+  font-weight: 700;
+}
+
+/* Movie Card Title in Two26 MD Nichrome */
+.card-title {
+  font-family: var(--font-primary-dark);
+  font-size: 1.55rem;
+  line-height: 90%;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  color: var(--brand-black);
+  margin-bottom: 8px;
+}
+
+/* Two26 Discount Pill Tag */
+.card-discount-tag {
+  display: inline-block;
+  align-self: flex-start;
+  background-color: var(--brand-accent);
+  color: var(--brand-black);
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  font-family: var(--font-secondary);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  margin-bottom: 14px;
+}
+
+/* Price Row */
+.card-price-row {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-bottom: 16px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.price-label {
+  font-family: var(--font-secondary);
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.price-val {
+  font-family: var(--font-primary-dark);
+  font-size: 1.85rem;
+  line-height: 85%;
+  font-weight: 700;
+  color: var(--brand-primary);
+}
+
+/* Multiplex Showtimes & Timing Chips */
+.theatres-showtimes {
+  margin-bottom: 18px;
+  background-color: var(--brand-secondary);
+  border: 1px solid var(--brand-black);
+  border-radius: var(--radius-md);
+  padding: 12px;
+}
+
+.theatre-row-preview {
+  font-family: var(--font-secondary);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--brand-black);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
+.timing-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.timing-chip {
+  background-color: var(--brand-white);
+  border: 1.5px solid var(--brand-black);
+  border-radius: var(--radius-pill);
+  padding: 5px 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-secondary);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--brand-black);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.timing-chip:hover {
+  background-color: var(--brand-primary);
+  color: #ffffff;
+  border-color: var(--brand-black);
+  transform: translateY(-2px);
+  box-shadow: 2px 2px 0px var(--brand-black);
+}
+
+.chip-price {
+  font-weight: 700;
+  font-size: 10px;
+}
+
+/* Card Actions Container */
+.card-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: auto;
+}
+
+/* --------------------------------------------------------------------------
+   10. BUTTON SYSTEM (Two26 Signature Pill Buttons)
+   -------------------------------------------------------------------------- */
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 18px;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-secondary);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  transition: var(--transition);
+  text-decoration: none;
+  border: 1.5px solid var(--brand-black);
+}
+
+/* Primary Two26 Orange CTA */
+.action-btn.primary {
+  background-color: var(--brand-primary);
+  color: #ffffff;
+  box-shadow: 2px 2px 0px var(--brand-black);
+}
+
+.action-btn.primary:hover {
+  background-color: var(--brand-primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 3px 3px 0px var(--brand-black);
+}
+
+/* Secondary Two26 Porcelain Button */
+.action-btn.secondary {
+  background-color: var(--brand-white);
+  color: var(--brand-black);
+  box-shadow: 2px 2px 0px var(--brand-black);
+}
+
+.action-btn.secondary:hover {
+  background-color: var(--brand-secondary);
+  transform: translateY(-2px);
+  box-shadow: 3px 3px 0px var(--brand-black);
+}
+
+/* Trailer & Tracker Auxiliary Buttons */
+.action-btn.trailer-btn {
+  grid-column: span 1;
+  background-color: var(--brand-secondary);
+  color: var(--brand-black);
+  font-size: 11px;
+  padding: 8px 12px;
+}
+
+.action-btn.trailer-btn:hover {
+  background-color: var(--brand-black);
+  color: #ffffff;
+}
+
+.action-btn.track-btn {
+  grid-column: span 1;
+  background-color: transparent;
+  color: var(--brand-black);
+  font-size: 11px;
+  padding: 8px 12px;
+}
+
+.action-btn.track-btn:hover {
+  background-color: var(--brand-accent);
+}
+
+.action-btn.full-width {
+  width: 100%;
+}
+
+/* --------------------------------------------------------------------------
+   11. MODALS & OVERLAYS (Two26 Bold Architectural Windows)
+   -------------------------------------------------------------------------- */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.modal-card {
+  background-color: var(--brand-white);
+  border: 2px solid var(--brand-black);
+  border-radius: var(--radius-xl);
+  width: 100%;
+  max-width: 760px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.2), 6px 6px 0px var(--brand-black);
+  padding: 32px;
+  position: relative;
+  animation: two26ModalPop 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes two26ModalPop {
+  0% { opacity: 0; transform: scale(0.95) translateY(10px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.compare-modal-card {
+  max-width: 1120px;
+  width: 95vw;
+}
+
+.modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding-bottom: 20px;
+  border-bottom: 1.5px solid var(--brand-black);
+  margin-bottom: 24px;
+}
+
+.modal-title {
+  font-family: var(--font-primary-dark);
+  font-size: 1.85rem;
+  line-height: 85%;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  color: var(--brand-black);
+}
+
+.modal-subtitle {
+  font-family: var(--font-secondary);
+  font-size: 0.88rem;
+  color: var(--color-text-muted);
+  margin-top: 6px;
+}
+
+.modal-close-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-pill);
+  border: 1.5px solid var(--brand-black);
+  background-color: var(--brand-white);
+  color: var(--brand-black);
+  font-size: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.modal-close-btn:hover {
+  background-color: var(--brand-primary);
+  color: #ffffff;
+  transform: rotate(90deg);
+}
+
+.modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  padding-top: 24px;
+  border-top: 1.5px solid var(--brand-black);
+  margin-top: 24px;
+}
+
+/* Comparison Matrix Table */
+.comparison-table-wrapper {
+  overflow-x: auto;
+  border: 1.5px solid var(--brand-black);
+  border-radius: var(--radius-md);
+  margin-top: 20px;
+  background-color: var(--brand-white);
+}
+
+.compare-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-family: var(--font-secondary);
+  font-size: 0.85rem;
+}
+
+.compare-table th {
+  background-color: var(--brand-black);
+  color: var(--brand-white);
+  padding: 10px 10px;
+  font-family: var(--font-primary-dark);
+  font-size: 0.95rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.compare-table td {
+  padding: 10px 10px;
+  border-bottom: 1px solid var(--color-border-subtle);
+  color: var(--brand-black);
+}
+
+.compare-table tr:nth-child(even) td {
+  background-color: var(--brand-secondary);
+}
+
+.compare-table tr.cheapest-row td {
+  background-color: var(--brand-accent) !important;
+}
+
+
+.seats-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-secondary);
+  font-weight: 700;
+  font-size: 11px;
+  white-space: nowrap;
+  letter-spacing: 0.02em;
+  border: 1px solid var(--brand-black);
+  box-shadow: 1.5px 1.5px 0px var(--brand-black);
+}
+
+.seats-badge.available {
+  background-color: var(--brand-primary);
+  color: #ffffff;
+}
+
+.seats-badge.filling-fast {
+  background-color: #ff6e26;
+  color: #ffffff;
+}
+
+.seats-badge.almost-full {
+  background-color: var(--brand-black);
+  color: var(--brand-primary);
+  border: 1.5px solid var(--brand-primary);
+}
+
+.seats-badge.sold-out {
+  background-color: #4b5563;
+  color: #ffffff;
+  border: 1px solid var(--brand-black);
+}
+
+.badge-cheapest {
+  display: inline-block;
+  background-color: var(--brand-primary);
+  color: #ffffff;
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  margin-left: 6px;
+}
+
+/* Multi-Platform Live Booking Choices */
+.platform-choices-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin: 24px 0;
+}
+
+.platform-choice-card {
+  background-color: var(--brand-white);
+  border: 1.5px solid var(--brand-black);
+  border-radius: var(--radius-md);
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  transition: var(--transition);
+  box-shadow: 2px 2px 0px var(--brand-black);
+}
+
+.platform-choice-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 4px 4px 0px var(--brand-black);
+}
+
+.platform-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.platform-name {
+  font-family: var(--font-primary-dark);
+  font-size: 1.25rem;
+  line-height: 90%;
+  text-transform: uppercase;
+}
+
+.platform-tag {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+}
+
+.platform-desc {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  line-height: 1.4;
+  margin-bottom: 14px;
+}
+
+.platform-launch-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 9px 16px;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-secondary);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  text-decoration: none;
+  color: #ffffff;
+  border: 1.5px solid var(--brand-black);
+  transition: var(--transition);
+  margin-top: auto;
+}
+
+.platform-launch-btn.btn-bms { background-color: #eb0028; }
+.platform-launch-btn.btn-pvr { background-color: var(--brand-primary); }
+.platform-launch-btn.btn-district { background-color: #7c3aed; }
+.platform-launch-btn.btn-cinepolis { background-color: #0284c7; }
+
+.platform-launch-btn:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+/* Promo Codes Box in Booking Modal */
+.promo-section-box {
+  background-color: var(--brand-secondary);
+  border: 1.5px solid var(--brand-black);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  margin-top: 16px;
+}
+
+.promo-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.promo-chip {
+  background-color: var(--brand-white);
+  border: 1px solid var(--brand-black);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.promo-chip:hover {
+  background-color: var(--brand-accent);
+  transform: translateY(-1px);
+}
+
+.promo-code-text {
+  font-family: monospace;
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--brand-primary);
+}
+
+/* Price Drop Alert Form & Active Alert Lists */
+.alert-form-box {
+  background-color: var(--brand-secondary);
+  border: 1.5px solid var(--brand-black);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  margin-bottom: 24px;
+}
+
+.alert-form-box h3 {
+  font-family: var(--font-primary-dark);
+  font-size: 1.35rem;
+  line-height: 90%;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.form-group label {
+  display: block;
+  font-family: var(--font-secondary);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  color: var(--brand-black);
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  background-color: var(--brand-white);
+  border: 1.5px solid var(--brand-black);
+  border-radius: var(--radius-sm);
+  padding: 9px 12px;
+  font-family: var(--font-secondary);
+  font-size: 13px;
+  color: var(--brand-black);
+  outline: none;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  border-color: var(--brand-primary);
+}
+
+.alert-item-card {
+  background-color: var(--brand-white);
+  border: 1px solid var(--brand-black);
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+/* --------------------------------------------------------------------------
+   12. TOAST NOTIFICATIONS (Two26 Capsule Pill Toasts)
+   -------------------------------------------------------------------------- */
+.toast-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 99999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  pointer-events: none;
+}
+
+.toast {
+  pointer-events: auto;
+  background-color: var(--brand-black);
+  color: var(--brand-white);
+  border: 1.5px solid var(--brand-primary);
+  border-radius: var(--radius-pill);
+  padding: 12px 24px;
+  font-family: var(--font-secondary);
+  font-size: 13px;
+  font-weight: 500;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25), 3px 3px 0px var(--brand-primary);
+  animation: two26ToastIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes two26ToastIn {
+  0% { opacity: 0; transform: translateY(20px) scale(0.9); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+
+/* --------------------------------------------------------------------------
+   12B. TRAILER MODAL & UNIVERSAL HD PLAYER (Two26 Design System)
+   -------------------------------------------------------------------------- */
+.trailer-modal-card {
+  max-width: 880px;
+  width: 95%;
+  padding: 0 !important;
+  overflow: hidden;
+  background-color: var(--brand-black);
+  border: 1.5px solid var(--brand-black);
+  border-radius: var(--radius-card);
+  box-shadow: 6px 6px 0px var(--brand-black);
+}
+
+.trailer-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 22px;
+  background-color: var(--brand-black);
+  color: var(--brand-white);
+  border-bottom: 1.5px solid rgba(255, 255, 255, 0.12);
+}
+
+.trailer-title-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  overflow: hidden;
+}
+
+.trailer-pill-badge {
+  background-color: var(--brand-primary);
+  color: #ffffff;
+  font-family: var(--font-secondary);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  padding: 3px 9px;
+  border-radius: var(--radius-pill);
+  flex-shrink: 0;
+}
+
+.trailer-modal-title {
+  font-family: var(--font-primary-dark);
+  font-size: 1.15rem;
+  letter-spacing: -0.015em;
+  text-transform: uppercase;
+  color: var(--brand-white);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.trailer-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.trailer-external-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--brand-accent);
+  font-family: var(--font-secondary);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: var(--radius-pill);
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+.trailer-external-btn:hover {
+  background-color: var(--brand-primary);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.trailer-close-btn {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 26px;
+  line-height: 1;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-pill);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.trailer-close-btn:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+}
+
+.trailer-video-wrapper {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+  height: 0;
+  background-color: #050505;
+}
+
+.trailer-video-wrapper iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* Trailer Dynamic Loading State */
+.trailer-loader-container {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle, #1a1a1a 0%, #080808 100%);
+  color: var(--brand-white);
+  gap: 18px;
+  padding: 24px;
+  text-align: center;
+}
+
+.trailer-pulse-spinner {
+  width: 46px;
+  height: 46px;
+  border: 3.5px solid rgba(255, 255, 255, 0.12);
+  border-top-color: var(--brand-primary);
+  border-radius: 50%;
+  animation: trailerSpin 0.8s linear infinite;
+}
+
+@keyframes trailerSpin {
+  to { transform: rotate(360deg); }
+}
+
+.trailer-loader-text strong {
+  display: block;
+  font-family: var(--font-primary-dark);
+  font-size: 1.15rem;
+  letter-spacing: -0.01em;
+  color: var(--brand-primary);
+  margin-bottom: 6px;
+}
+
+.trailer-loader-text span {
+  font-family: var(--font-secondary);
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* Fallback Card for Domain-Restricted Studio Videos */
+.trailer-fallback-container {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #111;
+  padding: 24px;
+}
+
+.trailer-fallback-box {
+  background-color: #1a1a1a;
+  border: 1.5px solid var(--brand-primary);
+  border-radius: var(--radius-card);
+  padding: 28px 24px;
+  text-align: center;
+  max-width: 480px;
+  box-shadow: 4px 4px 0px var(--brand-primary);
+}
+
+.trailer-fallback-badge {
+  display: inline-block;
+  background-color: var(--brand-black);
+  color: var(--brand-accent);
+  font-family: var(--font-secondary);
+  font-size: 10px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  margin-bottom: 12px;
+}
+
+.trailer-fallback-title {
+  font-family: var(--font-primary-dark);
+  font-size: 1.5rem;
+  color: #fff;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+
+.trailer-fallback-subtitle {
+  font-family: var(--font-secondary);
+  font-size: 0.88rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 22px;
+  line-height: 1.4;
+}
+
+.trailer-fallback-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background-color: var(--brand-primary);
+  color: #ffffff;
+  font-family: var(--font-secondary);
+  font-size: 0.88rem;
+  font-weight: 600;
+  padding: 10px 22px;
+  border-radius: var(--radius-pill);
+  border: 1.5px solid var(--brand-black);
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+.trailer-fallback-btn:hover {
+  background-color: #ffffff;
+  color: var(--brand-black);
+  transform: translateY(-2px);
+  box-shadow: 3px 3px 0px var(--brand-black);
+}
+
+/* --------------------------------------------------------------------------
+   13. RESPONSIVE MEDIA QUERIES (Mobile-Friendly Two26 Adaptation)
+   -------------------------------------------------------------------------- */
+@media (max-width: 1080px) {
+  .main-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar-filters {
+    position: static;
+  }
+
+  .two26-floating-pill.pill-one { left: 2%; top: 10%; }
+  .two26-floating-pill.pill-two { right: 2%; top: 10%; }
+  .two26-floating-pill.pill-three,
+  .two26-floating-pill.pill-four {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .landing-hero-viewport {
+    height: auto;
+    min-height: auto;
+    overflow: visible;
+  }
+  .nav-container {
+    padding: 0 16px;
+    height: 60px;
+  }
+
+  .nav-center {
+    display: none;
+  }
+
+  .nav-search-box {
+    width: 140px;
+  }
+  .nav-search-box:focus-within {
+    width: 180px;
+  }
+
+  .editorial-hero-showcase {
+    padding: 40px 16px 20px;
+  }
+
+  .hero-giant-title {
+    font-size: 3.2rem;
+  }
+
+  .two26-floating-pill {
+    font-size: 0.72rem;
+    padding: 0.4em 0.9em;
+  }
+
+  .hero-split-container {
+    grid-template-columns: 1fr;
+    gap: 18px;
+    padding: 10px 0 16px;
+  }
+
+  .hero-split-left {
+    align-items: center;
+    text-align: center;
+  }
+
+  .hero-split-heading.left-heading {
+    text-align: center;
+    font-size: 2.2rem;
+    white-space: normal;
+  }
+
+  .hero-split-center {
+    width: 100%;
+    max-width: 480px;
+    aspect-ratio: 16 / 9;
+    height: auto;
+    margin: 0 auto;
+  }
+
+  .hero-split-right {
+    align-items: center;
+    text-align: center;
+  }
+
+  .hero-split-heading.right-heading {
+    text-align: center;
+    font-size: 3.4rem;
+    white-space: normal;
+  }
+
+  .movie-cards-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .platform-choices-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .promo-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* --------------------------------------------------------------------------
+   Landing Page Explore CTA Card (Two26 Studio System)
+   -------------------------------------------------------------------------- */
+.landing-explore-cta {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 24px 32px 48px;
+}
+
+.landing-cta-card {
+  background-color: var(--brand-white);
+  border: 1.5px solid var(--brand-black);
+  border-radius: var(--radius-card);
+  padding: 32px 40px;
+  box-shadow: 4px 4px 0px var(--brand-black);
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 32px;
+  align-items: center;
+}
+
+.landing-cta-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background-color: var(--brand-black);
+  color: var(--brand-accent);
+  font-family: var(--font-secondary);
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 4px 12px;
+  border-radius: var(--radius-pill);
+  margin-bottom: 12px;
+}
+
+.landing-cta-heading {
+  font-family: var(--font-primary-dark);
+  font-size: clamp(1.4rem, 2vw, 2.1rem);
+  color: var(--brand-black);
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  line-height: 1.05;
+  margin-bottom: 10px;
+}
+
+.landing-cta-subtext {
+  font-family: var(--font-secondary);
+  font-size: 0.95rem;
+  color: var(--color-olive-muted);
+  max-width: 680px;
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+.landing-cta-stats {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  flex-wrap: wrap;
+}
+
+.cta-stat-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.cta-stat-item .stat-number {
+  font-family: var(--font-primary-dark);
+  font-size: 1.6rem;
+  color: var(--brand-primary);
+  line-height: 1;
+}
+
+.cta-stat-item .stat-label {
+  font-family: var(--font-secondary);
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--brand-black);
+  letter-spacing: 0.05em;
+  margin-top: 2px;
+}
+
+.landing-cta-action {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.landing-cta-main-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  background-color: var(--brand-primary);
+  color: #ffffff;
+  padding: 16px 32px;
+  border: 2px solid var(--brand-black);
+  border-radius: var(--radius-pill);
+  font-family: var(--font-primary-dark);
+  font-size: 1.15rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-decoration: none;
+  box-shadow: 4px 4px 0px var(--brand-black);
+  transition: var(--transition-bounce);
+  white-space: nowrap;
+}
+
+.landing-cta-main-btn:hover {
+  background-color: var(--brand-black);
+  color: #ffffff;
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px var(--brand-primary);
+}
+
+.landing-cta-hint {
+  font-family: var(--font-secondary);
+  font-size: 0.75rem;
+  color: var(--color-olive-muted);
+}
+
+/* --------------------------------------------------------------------------
+   Pagination Controls (Two26 Capsule Pill Controls)
+   -------------------------------------------------------------------------- */
+.pagination-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 36px 0 20px;
+  flex-wrap: wrap;
+}
+
+.page-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+  height: 40px;
+  padding: 0 14px;
+  border-radius: var(--radius-pill);
+  border: 1.5px solid var(--brand-black);
+  background-color: var(--brand-white);
+  color: var(--brand-black);
+  font-family: var(--font-secondary);
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 2px 2px 0px var(--brand-black);
+  transition: var(--transition);
+}
+
+.page-btn:hover:not(:disabled) {
+  background-color: var(--brand-secondary);
+  transform: translateY(-2px);
+}
+
+.page-btn.active {
+  background-color: var(--brand-black);
+  color: var(--brand-white);
+  box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.2);
+}
+
+.page-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+@media (max-width: 768px) {
+  .landing-cta-card {
+    grid-template-columns: 1fr;
+    padding: 24px 20px;
+  }
+  .landing-cta-action {
+    align-items: stretch;
+  }
+  .landing-cta-main-btn {
+    justify-content: center;
+  }
+}
+
+
+/* ==========================================================================
+   LIVE PRICE MATRIX & GOLDEN-HOUR ARBITER MODAL (TWO26 STUDIO)
+   ========================================================================== */
+
+.price-matrix-modal-card {
+  width: 95vw;
+  max-width: 1180px;
+  background-color: var(--brand-cream, #F8F3ED);
+  border: 2.5px solid var(--brand-black);
+  border-radius: 20px;
+  box-shadow: 8px 8px 0px var(--brand-black), 0 30px 80px rgba(0,0,0,0.3);
+  padding: 24px 28px;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+.matrix-modal-header {
+  border-bottom: 2px solid var(--brand-black);
+  padding-bottom: 16px;
+  margin-bottom: 20px;
+}
+
+.matrix-badge-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.matrix-live-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #000;
+  color: #fff;
+  font-family: var(--font-secondary);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  padding: 3px 10px;
+  border-radius: 999px;
+  text-transform: uppercase;
+}
+
+.matrix-pulse-dot {
+  width: 7px;
+  height: 7px;
+  background-color: #00FF66;
+  border-radius: 50%;
+  box-shadow: 0 0 8px #00FF66;
+  animation: matrixPulse 1.4s infinite;
+}
+
+@keyframes matrixPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.85); }
+}
+
+.matrix-city-badge {
+  background-color: var(--brand-orange, #FF5500);
+  color: #fff;
+  font-family: var(--font-secondary);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: 1.5px solid var(--brand-black);
+  text-transform: uppercase;
+}
+
+.matrix-heading {
+  font-size: 1.95rem;
+  letter-spacing: -0.02em;
+  margin: 4px 0 2px 0;
+}
+
+.matrix-subheading {
+  color: #555;
+  font-size: 0.88rem;
+  font-family: var(--font-secondary);
+}
+
+/* Toolbar */
+.matrix-toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background-color: #fff;
+  border: 2px solid var(--brand-black);
+  border-radius: 14px;
+  padding: 14px 18px;
+  margin-bottom: 24px;
+  box-shadow: 3px 3px 0px var(--brand-black);
+}
+
+.matrix-toolbar-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.matrix-toolbar-loc-row {
+  border-top: 1px dashed var(--color-border-subtle, #e5e0d8);
+  padding-top: 10px;
+}
+
+.matrix-loc-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.matrix-btn-compare-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-secondary);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  background-color: var(--brand-cream, #F8F3ED);
+  color: var(--brand-black);
+  border: 1.5px solid var(--brand-black);
+  border-radius: 8px;
+  padding: 8px 14px;
+  cursor: pointer;
+  box-shadow: 2px 2px 0px var(--brand-black);
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.matrix-btn-compare-switch:hover {
+  background-color: var(--brand-primary);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.slot-dist-sub {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--brand-black);
+  background-color: rgba(0,0,0,0.05);
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-top: 4px;
+}
+
+.matrix-movie-picker {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 260px;
+}
+
+.matrix-label {
+  font-family: var(--font-secondary);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  color: var(--brand-black);
+  white-space: nowrap;
+}
+
+.matrix-select {
+  flex: 1;
+  font-family: var(--font-secondary);
+  font-size: 0.92rem;
+  font-weight: 700;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1.5px solid var(--brand-black);
+  background-color: var(--brand-cream, #F8F3ED);
+  color: var(--brand-black);
+  cursor: pointer;
+  outline: none;
+}
+
+.matrix-select:focus {
+  border-color: var(--brand-primary);
+}
+
+.matrix-btn-export {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background-color: var(--brand-black);
+  color: #fff;
+  border: 2px solid var(--brand-black);
+  border-radius: 10px;
+  padding: 9px 16px;
+  font-family: var(--font-secondary);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: 2px 2px 0px var(--brand-primary);
+}
+
+.matrix-btn-export:hover {
+  background-color: var(--brand-primary);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+/* Golden Hour Callout */
+.golden-deal-card {
+  background: linear-gradient(135deg, #141414 0%, #1e1e1e 100%);
+  color: #fff;
+  border: 2.5px solid var(--brand-black);
+  border-radius: 16px;
+  padding: 22px 26px;
+  margin-bottom: 24px;
+  box-shadow: 4px 4px 0px var(--brand-primary);
+  position: relative;
+  overflow: hidden;
+}
+
+.golden-deal-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background-color: var(--brand-primary);
+  color: #fff;
+  font-family: var(--font-secondary);
+  font-size: 0.74rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  padding: 4px 14px;
+  border-radius: 999px;
+  margin-bottom: 14px;
+}
+
+.golden-deal-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.golden-deal-main {
+  flex: 1;
+  min-width: 280px;
+}
+
+.golden-deal-savings {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.savings-val {
+  font-family: var(--font-primary-dark);
+  font-size: 2.1rem;
+  color: #00FF66;
+  line-height: 1;
+}
+
+.savings-pct {
+  font-family: var(--font-secondary);
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #FFB300;
+}
+
+.golden-deal-desc {
+  font-family: var(--font-secondary);
+  font-size: 0.94rem;
+  line-height: 1.5;
+  color: #E2E2E2;
+  margin: 0;
+}
+
+.golden-deal-desc strong {
+  color: #fff;
+}
+
+.golden-deal-action {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+.btn-golden-book {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background-color: var(--brand-primary);
+  color: #fff;
+  text-decoration: none;
+  font-family: var(--font-secondary);
+  font-size: 0.92rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  padding: 13px 24px;
+  border-radius: 12px;
+  border: 2px solid #fff;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.btn-golden-book:hover {
+  background-color: #fff;
+  color: var(--brand-black);
+  transform: scale(1.03);
+}
+
+.golden-seats-left {
+  font-family: var(--font-secondary);
+  font-size: 0.74rem;
+  color: #aaa;
+  font-weight: 600;
+}
+
+/* 4 Time Window Cards Grid */
+.matrix-windows-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 24px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 1140px) {
+  .matrix-windows-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+}
+
+@media (max-width: 600px) {
+  .matrix-windows-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+}
+
+.matrix-window-card {
+  background-color: #fff;
+  border: 2px solid var(--brand-black);
+  border-radius: 14px;
+  padding: 15px;
+  box-shadow: 3px 3px 0px var(--brand-black);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-width: 0;
+  overflow: hidden;
+  box-sizing: border-box;
+  transition: transform 0.15s ease;
+}
+
+.matrix-window-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 4px 4px 0px var(--brand-black);
+}
+
+.matrix-window-header {
+  border-bottom: 1.5px solid #eee;
+  padding-bottom: 10px;
+  margin-bottom: 12px;
+}
+
+.window-badge-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.window-name {
+  font-family: var(--font-primary-dark);
+  font-size: 1.3rem;
+  color: var(--brand-black);
+  margin: 0;
+  line-height: 1;
+}
+
+.window-count-pill {
+  background-color: var(--brand-cream);
+  border: 1px solid var(--brand-black);
+  border-radius: 999px;
+  font-family: var(--font-secondary);
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 2px 7px;
+  color: #333;
+}
+
+.window-time-range {
+  font-family: var(--font-secondary);
+  font-size: 0.75rem;
+  color: #777;
+  font-weight: 600;
+}
+
+.window-fares-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  background-color: var(--brand-cream);
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin-bottom: 14px;
+  border: 1px solid #e8e2d8;
+}
+
+.fare-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.fare-lbl {
+  font-family: var(--font-secondary);
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: #777;
+  letter-spacing: 0.05em;
+}
+
+.fare-val {
+  font-family: var(--font-primary-dark);
+  font-size: 1.25rem;
+  color: var(--brand-black);
+  line-height: 1.1;
+}
+
+.fare-val.min-fare {
+  color: var(--brand-primary);
+  font-weight: 900;
+}
+
+.fare-val.avg-fare {
+  color: var(--brand-primary);
+}
+
+.window-cheapest-box {
+  margin-top: auto;
+  padding-top: 10px;
+  border-top: 1px dashed #ddd;
+}
+
+.cheapest-label {
+  font-family: var(--font-secondary);
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 4px;
+}
+
+.cheapest-theatre {
+  font-family: var(--font-secondary);
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--brand-black);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 2px;
+}
+
+.cheapest-meta {
+  font-family: var(--font-secondary);
+  font-size: 0.74rem;
+  color: #666;
+  margin-bottom: 10px;
+}
+
+.btn-book-slot {
+  display: block;
+  text-align: center;
+  background-color: var(--brand-black);
+  color: #ffffff;
+  text-decoration: none;
+  font-family: var(--font-secondary);
+  font-size: 0.8rem;
+  font-weight: 800;
+  padding: 8px 14px;
+  border-radius: var(--radius-pill);
+  border: 1.5px solid var(--brand-black);
+  box-shadow: 2px 2px 0px var(--brand-black);
+  transition: all 0.15s ease;
+  cursor: pointer;
+}
+
+.btn-book-slot:hover {
+  background-color: var(--brand-primary);
+  color: #ffffff;
+  border-color: var(--brand-black);
+  transform: translateY(-2px);
+  box-shadow: 3px 3px 0px var(--brand-black);
+}
+
+.btn-book-slot:active {
+  transform: translateY(0);
+  box-shadow: 1px 1px 0px var(--brand-black);
+}
+
+/* Chain Comparison */
+.matrix-chains-section {
+  background-color: #fff;
+  border: 2px solid var(--brand-black);
+  border-radius: 14px;
+  padding: 18px 20px;
+  box-shadow: 3px 3px 0px var(--brand-black);
+}
+
+.matrix-chains-title {
+  font-family: var(--font-primary-dark);
+  font-size: 1.2rem;
+  color: var(--brand-black);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.matrix-chains-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.matrix-chains-table th {
+  text-align: left;
+  font-family: var(--font-secondary);
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #777;
+  letter-spacing: 0.05em;
+  padding: 8px 12px;
+  border-bottom: 1.5px solid #eee;
+}
+
+.matrix-chains-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #f0f0f0;
+  font-family: var(--font-secondary);
+  font-size: 0.85rem;
+  color: var(--brand-black);
+}
+
+.chain-badge {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-weight: 800;
+  font-size: 0.75rem;
+  background-color: var(--brand-cream);
+  border: 1px solid var(--brand-black);
+}
+
+.matrix-chains-table tr:hover td {
+  background-color: #faf8f5;
+}
+
+.matrix-spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid rgba(0,0,0,0.1);
+  border-top-color: var(--brand-primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 40px auto 16px auto;
+}
+
+.matrix-loading-state {
+  text-align: center;
+  padding: 40px 20px;
+  font-family: var(--font-secondary);
+  color: #666;
+  font-size: 0.95rem;
+}
+
+.matrix-modal-footer {
+  border-top: 1.5px solid var(--brand-black);
+  padding-top: 16px;
+  margin-top: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.matrix-footer-note {
+  font-family: var(--font-secondary);
+  font-size: 0.74rem;
+  color: #777;
+  font-weight: 600;
+}
+
+.matrix-close-action {
+  padding: 10px 24px;
+  font-family: var(--font-secondary);
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  background-color: var(--brand-black);
+  color: #fff;
+  border: 2px solid var(--brand-black);
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.matrix-close-action:hover {
+  background-color: var(--brand-primary);
+}
+
+
+
+/* Location & Proximity Control Toolbar for Price Comparison */
+.compare-filter-toolbar {
+  background: var(--brand-secondary, #faf7f2);
+  border: 1.5px solid var(--brand-black);
+  border-radius: var(--radius-md, 12px);
+  padding: 14px 18px;
+  margin-bottom: 16px;
+  box-shadow: 2.5px 2.5px 0px var(--brand-black);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.compare-toolbar-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.compare-loc-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.compare-loc-label {
+  font-family: var(--font-primary-dark, 'Cinzel', sans-serif);
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--brand-black);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.compare-hub-select {
+  background-color: var(--brand-white, #ffffff);
+  color: var(--brand-black);
+  border: 1.5px solid var(--brand-black);
+  border-radius: var(--radius-pill, 9999px);
+  padding: 6px 14px;
+  font-family: var(--font-secondary, sans-serif);
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 1.5px 1.5px 0px var(--brand-black);
+  outline: none;
+  transition: all 0.15s ease;
+}
+
+.compare-hub-select:focus {
+  border-color: var(--brand-primary);
+  box-shadow: 2px 2px 0px var(--brand-primary);
+}
+
+.compare-gps-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: var(--brand-black);
+  color: var(--brand-white, #ffffff);
+  border: 1.5px solid var(--brand-black);
+  border-radius: var(--radius-pill, 9999px);
+  padding: 6px 14px;
+  font-family: var(--font-secondary, sans-serif);
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 1.5px 1.5px 0px var(--brand-primary);
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.compare-gps-btn:hover {
+  background-color: var(--brand-primary);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.compare-gps-btn.gps-active {
+  background-color: #10b981;
+  border-color: var(--brand-black);
+  color: #ffffff;
+}
+
+.compare-loc-status {
+  font-family: var(--font-secondary, sans-serif);
+  font-size: 0.82rem;
+  color: var(--color-olive-muted, #555);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.compare-loc-status strong {
+  color: var(--brand-black);
+}
+
+.compare-filter-row {
+  border-top: 1px dashed var(--color-border-subtle, #e5e0d8);
+  padding-top: 10px;
+}
+
+.compare-sort-group, .compare-dist-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.compare-filter-label {
+  font-family: var(--font-secondary, sans-serif);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--brand-black);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.compare-pill-tabs {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.compare-pill-btn {
+  background-color: var(--brand-white, #ffffff);
+  color: var(--brand-black);
+  border: 1.5px solid var(--brand-black);
+  border-radius: var(--radius-pill, 9999px);
+  padding: 5px 13px;
+  font-family: var(--font-secondary, sans-serif);
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 1.5px 1.5px 0px var(--brand-black);
+  transition: all 0.12s ease;
+  white-space: nowrap;
+}
+
+.compare-pill-btn:hover {
+  background-color: #f3ece4;
+  transform: translateY(-1px);
+}
+
+.compare-pill-btn.active {
+  background-color: var(--brand-primary) !important;
+  color: #ffffff !important;
+  box-shadow: 2px 2px 0px var(--brand-black) !important;
+}
+
+.compare-pill-btn#tab-sort-best_value.active {
+  background-color: #ea580c !important;
+}
+
+.compare-pill-btn#tab-sort-nearest.active {
+  background-color: #0284c7 !important;
+}
+
+/* Badges for Comparison Matrix */
+.badge-cheapest {
+  display: inline-block;
+  background-color: var(--brand-primary);
+  color: #ffffff;
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  margin-left: 6px;
+  border: 1px solid var(--brand-black);
+  box-shadow: 1px 1px 0px var(--brand-black);
+}
+
+.badge-best-value {
+  display: inline-block;
+  background-color: #f59e0b;
+  color: #000000;
+  font-size: 9px;
+  font-weight: 800;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  margin-left: 6px;
+  border: 1px solid var(--brand-black);
+  box-shadow: 1px 1px 0px var(--brand-black);
+}
+
+.badge-nearest {
+  display: inline-block;
+  background-color: #0284c7;
+  color: #ffffff;
+  font-size: 9px;
+  font-weight: 800;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  margin-left: 6px;
+  border: 1px solid var(--brand-black);
+  box-shadow: 1px 1px 0px var(--brand-black);
+}
+
+.theatre-dist-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background-color: rgba(0, 0, 0, 0.05);
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-weight: 700;
+  color: var(--brand-black);
+}
+
+.compare-dist-cell {
+  font-family: var(--font-secondary);
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: var(--brand-black);
+  white-space: nowrap;
+}
+
+.compare-dist-pill {
+  display: inline-block;
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 9999px;
+  font-weight: 700;
+  margin-left: 4px;
+}
+.compare-dist-pill.close {
+  background-color: #dcfce7;
+  color: #15803d;
+  border: 1px solid #16a34a;
+}
+.compare-dist-pill.mid {
+  background-color: #fef3c7;
+  color: #b45309;
+  border: 1px solid #d97706;
+}
+.compare-dist-pill.far {
+  background-color: #f3f4f6;
+  color: #4b5563;
+  border: 1px solid #9ca3af;
+}
+
+/* Dynamic Deal Banner */
+.compare-banner {
+  padding: 14px 18px;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--brand-black);
+  box-shadow: 2px 2px 0px var(--brand-black);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+  transition: all 0.2s ease;
+}
+
+.compare-banner.cheapest-banner {
+  background-color: var(--color-sage-light, #fef2f2);
+  border-left: 6px solid var(--brand-primary);
+}
+
+.compare-banner.best-value-banner {
+  background-color: #fffbeb;
+  border-left: 6px solid #f59e0b;
+}
+
+.compare-banner.nearest-banner {
+  background-color: #f0f9ff;
+  border-left: 6px solid #0284c7;
+}
+
+.banner-subtext {
+  font-size: 0.82rem;
+  color: var(--color-olive-muted, #555);
+  font-weight: 500;
+  margin-left: 6px;
+}
+
+
+/* --------------------------------------------------------------------------
+   11C. EXAMINER VIVA DEMO & REAL-TIME PRICE DROP SIMULATOR
+   -------------------------------------------------------------------------- */
+.examiner-demo-box {
+  background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+  border: 2px solid var(--brand-black);
+  border-radius: var(--radius-md);
+  padding: 16px 18px;
+  margin-bottom: 20px;
+  box-shadow: 3px 3px 0px var(--brand-black);
+  position: relative;
+}
+
+.examiner-demo-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+
+.examiner-badge-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.examiner-pill {
+  background-color: var(--brand-black);
+  color: #fff;
+  font-family: var(--font-secondary);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  padding: 3px 8px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--brand-black);
+}
+
+.examiner-live-dot {
+  font-family: var(--font-secondary);
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--brand-primary);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  letter-spacing: 0.04em;
+}
+
+.examiner-sub-note {
+  font-family: var(--font-secondary);
+  font-size: 11px;
+  color: var(--color-olive-muted);
+  font-weight: 500;
+}
+
+.examiner-controls-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  background-color: rgba(255, 255, 255, 0.85);
+  border: 1.5px solid var(--brand-black);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  margin-bottom: 10px;
+}
+
+.examiner-select-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 240px;
+}
+
+.examiner-label {
+  font-family: var(--font-secondary);
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--brand-black);
+  white-space: nowrap;
+  letter-spacing: 0.04em;
+}
+
+.examiner-select {
+  flex: 1;
+  background-color: var(--brand-white);
+  border: 1.5px solid var(--brand-black);
+  border-radius: var(--radius-pill);
+  padding: 6px 12px;
+  font-family: var(--font-secondary);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--brand-black);
+  outline: none;
+  cursor: pointer;
+}
+
+.examiner-btn-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.btn-sim-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-secondary);
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+  border: 1.5px solid var(--brand-black);
+  box-shadow: 1.5px 1.5px 0px var(--brand-black);
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.btn-sim-action:hover {
+  transform: translateY(-1px);
+}
+
+.btn-sim-drop {
+  background-color: var(--brand-primary);
+  color: #fff;
+}
+
+.btn-sim-drop:hover {
+  background-color: #e04a00;
+  box-shadow: 2px 2px 0px var(--brand-black);
+}
+
+.btn-sim-surge {
+  background-color: #0284c7;
+  color: #fff;
+}
+
+.btn-sim-surge:hover {
+  background-color: #0369a1;
+  box-shadow: 2px 2px 0px var(--brand-black);
+}
+
+.btn-sim-reset {
+  background-color: var(--brand-cream, #fdf8f5);
+  color: var(--brand-black);
+}
+
+.examiner-note-footer {
+  font-family: var(--font-secondary);
+  font-size: 11px;
+  color: var(--color-olive-muted);
+  line-height: 1.4;
+  border-top: 1px dashed rgba(0, 0, 0, 0.15);
+  padding-top: 8px;
+}
+
+/* Alert Card Styles */
+.alert-item-card.alert-triggered {
+  border: 2px solid #16a34a;
+  background-color: #f0fdf4;
+  box-shadow: 2px 2px 0px #16a34a;
+}
+
+.badge-alert-active {
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  background-color: #e0e7ff;
+  color: #3730a3;
+  padding: 2px 6px;
+  border-radius: var(--radius-pill);
+  border: 1px solid #c7d2fe;
+}
+
+.badge-alert-triggered {
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  background-color: #dcfce7;
+  color: #15803d;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  border: 1px solid #16a34a;
+  animation: pulseTrigger 1.5s infinite;
+}
+
+@keyframes pulseTrigger {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+/* Notification Item Cards */
+.notif-item-card {
+  background-color: var(--brand-white);
+  border: 1.5px solid var(--brand-black);
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  box-shadow: 2px 2px 0px var(--brand-black);
+  transition: all 0.2s ease;
+}
+
+.notif-item-card.notif-drop {
+  border-left: 6px solid var(--brand-primary);
+  background-color: #fff9f5;
+}
+
+.notif-item-card.notif-surge {
+  border-left: 6px solid #0284c7;
+  background-color: #f0f9ff;
+}
+
+/* Navbar Bell Ring Shake Animation */
+.bell-ring-active {
+  animation: bellShake 0.8s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+  transform-origin: top center;
+}
+
+@keyframes bellShake {
+  0% { transform: rotate(0); }
+  15% { transform: rotate(15deg); }
+  30% { transform: rotate(-15deg); }
+  45% { transform: rotate(10deg); }
+  60% { transform: rotate(-10deg); }
+  75% { transform: rotate(5deg); }
+  85% { transform: rotate(-5deg); }
+  100% { transform: rotate(0); }
+}
+
+/* Rich Toasts */
+.toast.toast-drop {
+  border: 2px solid var(--brand-primary);
+  background-color: #1a1a1a;
+  box-shadow: 0 12px 32px rgba(255, 84, 0, 0.35), 3px 3px 0px var(--brand-primary);
+}
+
+.toast.toast-surge {
+  border: 2px solid #0284c7;
+  background-color: #1a1a1a;
+  box-shadow: 0 12px 32px rgba(2, 132, 199, 0.35), 3px 3px 0px #0284c7;
+}

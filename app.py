@@ -9,7 +9,7 @@ import os
 import sys
 import webbrowser
 import threading
-from flask import Flask, render_template, request, jsonify, Response
+from flask import Flask, render_template, request, jsonify, Response, send_from_directory
 from finder_engine import (
     CITIES, THEATRES, NOW_SHOWING_MOVIES, UPCOMING_MOVIES, PROMO_CODES,
     get_movie_shows, get_upcoming_movies, get_price_comparison, get_booking_details, get_price_matrix,
@@ -36,6 +36,13 @@ def index():
 @app.route('/movies')
 def movies_page():
     return render_template('movies.html', cities=CITIES, movie_count=len(NOW_SHOWING_MOVIES))
+
+@app.route('/static/<path:filename>')
+def serve_static(filename):
+    static_dir = os.path.join(BASE_DIR, 'static')
+    if not os.path.exists(static_dir):
+        static_dir = os.path.join(BASE_DIR, 'public', 'static')
+    return send_from_directory(static_dir, filename)
 
 @app.route('/api/movies', methods=['GET'])
 def api_movies():
