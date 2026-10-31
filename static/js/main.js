@@ -335,7 +335,7 @@ function renderUpcomingGrid(upcoming) {
         </p>
 
         <div style="font-size: 11px; color: var(--color-olive-muted); margin-bottom: 12px;">
-          <strong>Starring:</strong> ${mov.cast ? mov.cast.join(', ') : 'All-Star Cast'}<br>
+          <strong>Starring:</strong> ${mov.cast && Array.isArray(mov.cast) ? mov.cast.map(escapeHtml).join(', ') : 'All-Star Cast'}<br>
           <strong>Director:</strong> ${escapeHtml(mov.director)}
         </div>
 
@@ -560,13 +560,14 @@ function openTrailerModal(trailerId, movieTitle) {
 }
 
 function mountTrailerIframe(id, movieTitle) {
+  const cleanId = String(id).replace(/[^a-zA-Z0-9_\-]/g, '');
   const wrapper = document.getElementById('trailer-video-wrapper');
   const externalLink = document.getElementById('trailer-external-link');
   if (externalLink) {
-    externalLink.href = `https://www.youtube.com/watch?v=${id}`;
+    externalLink.href = `https://www.youtube.com/watch?v=${cleanId}`;
   }
 
-  const embedUrl = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&modestbranding=1&enablejsapi=1`;
+  const embedUrl = `https://www.youtube-nocookie.com/embed/${cleanId}?autoplay=1&rel=0&modestbranding=1&enablejsapi=1`;
   wrapper.innerHTML = `
     <iframe src="${embedUrl}" 
             title="${escapeHtml(movieTitle)} Official Trailer" 
@@ -1122,12 +1123,12 @@ function renderAlertsList(alerts) {
             ${isTriggered ? '<span class="badge-alert-triggered">🔥 TRIGGERED</span>' : '<span class="badge-alert-active">ACTIVE WATCHER</span>'}
           </div>
           <div style="font-size: 11px; color: var(--color-olive-muted); margin-top: 3px;">
-            Target: <strong>₹${a.target_price}</strong> | Current: <strong style="${isTriggered ? 'color: #16a34a;' : ''}">₹${a.last_price_found || 'Scanning...'}</strong> | ${escapeHtml(a.city)} • ${a.format_type}
+            Target: <strong>₹${Number(a.target_price) || 200}</strong> | Current: <strong style="${isTriggered ? 'color: #16a34a;' : ''}">₹${Number(a.last_price_found) || 'Scanning...'}</strong> | ${escapeHtml(a.city)} • ${escapeHtml(a.format_type)}
           </div>
         </div>
         <div style="display: flex; align-items: center; gap: 8px;">
-          ${isTriggered ? `<button class="action-btn primary" style="font-size: 11px; padding: 4px 10px;" onclick="closeAlertsModal(); openPriceMatrixModal('${a.movie_id}');">View Deal &rarr;</button>` : ''}
-          <button class="reset-link" style="color: var(--brand-black); font-size: 11px; font-weight: 700;" onclick="deleteAlert('${a.id}')">Delete</button>
+          ${isTriggered ? `<button class="action-btn primary" style="font-size: 11px; padding: 4px 10px;" onclick="closeAlertsModal(); openPriceMatrixModal('${escapeForJsAttr(a.movie_id)}');">View Deal &rarr;</button>` : ''}
+          <button class="reset-link" style="color: var(--brand-black); font-size: 11px; font-weight: 700;" onclick="deleteAlert('${escapeForJsAttr(a.id)}')">Delete</button>
         </div>
       </div>
     `;

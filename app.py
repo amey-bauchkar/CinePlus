@@ -28,7 +28,17 @@ app = Flask(
 )
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
+app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024  # 2MB request limit protection against DoS
 app.jinja_env.auto_reload = True
+
+@app.after_request
+def add_security_headers(response):
+    response.headers['X-Content-Type-Options'] = 'nosniff'
+    response.headers['X-Frame-Options'] = 'SAMEORIGIN'
+    response.headers['X-XSS-Protection'] = '1; mode=block'
+    response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
+    response.headers['Permissions-Policy'] = 'geolocation=(self), camera=(), microphone=()'
+    return response
 
 @app.route('/')
 def index():
@@ -43,6 +53,13 @@ def serve_static(filename):
     static_dir = os.path.join(BASE_DIR, 'static')
     if not os.path.exists(static_dir):
         static_dir = os.path.join(BASE_DIR, 'public', 'static')
+    
+    # Path traversal defense: ensure resolved path stays within static_dir
+    safe_base = os.path.abspath(static_dir)
+    requested = os.path.abspath(os.path.join(static_dir, filename))
+    if not requested.startswith(safe_base):
+        return jsonify({"status": "error", "message": "Access denied"}), 403
+
     return send_from_directory(static_dir, filename)
 
 @app.route('/api/movies', methods=['GET'])
@@ -129,13 +146,19 @@ def api_trailer():
     if not title:
         return jsonify({"status": "error", "message": "title is required"}), 400
         
-    trailer_id = resolve_youtube_trailer_id(title)
+    clean_title = re.sub(r'[<>]', '', title)[:120].strip()
+    trailer_id = resolve_youtube_trailer_id(clean_title)
+    
+    # Validate trailer_id is strictly a valid 11-char YouTube ID
+    if not re.match(r'^[a-zA-Z0-9_\-]{11}$', trailer_id):
+        trailer_id = "PWuJ5-WiEgY"
+
     embed_url = f"https://www.youtube-nocookie.com/embed/{trailer_id}?autoplay=1&rel=0&modestbranding=1"
     watch_url = f"https://www.youtube.com/watch?v={trailer_id}"
     
     return jsonify({
         "status": "success",
-        "title": title,
+        "title": clean_title,
         "trailer_id": trailer_id,
         "embed_url": embed_url,
         "watch_url": watch_url
@@ -159,16 +182,26 @@ def api_alerts():
         
     elif request.method == 'POST':
         payload = request.get_json() or {}
-        movie_id = payload.get('movie_id')
-        movie_title = payload.get('movie_title')
-        target_price = payload.get('target_price', 200)
-        city = payload.get('city', 'Mumbai')
-        format_type = payload.get('format_type', 'All')
-        email = payload.get('email', '')
-        
-        if not movie_title:
+        raw_title = payload.get('movie_title')
+        if not raw_title:
             return jsonify({"status": "error", "message": "movie_title is required"}), 400
-            
+
+        # Input sanitization and bounds enforcement
+        movie_title = re.sub(r'[<>]', '', str(raw_title))[:100].strip()
+        movie_id = re.sub(r'[^a-zA-Z0-9_\-]', '', str(payload.get('movie_id') or ''))[:50]
+        
+        try:
+            target_price = max(50, min(5000, int(float(payload.get('target_price', 200)))))
+        except (ValueError, TypeError):
+            target_price = 200
+
+        city = payload.get('city', 'Mumbai')
+        if city not in CITIES:
+            city = 'Mumbai'
+
+        format_type = re.sub(r'[^a-zA-Z0-9_\- ]', '', str(payload.get('format_type', 'All')))[:25]
+        email = re.sub(r'[^a-zA-Z0-9@._\-]', '', str(payload.get('email', 'user@example.com')))[:100]
+
         alert = alert_manager.add_alert(
             movie_id=movie_id,
             movie_title=movie_title,
@@ -180,20 +213,32 @@ def api_alerts():
         return jsonify({"status": "success", "alert": alert})
         
     elif request.method == 'DELETE':
-        alert_id = request.args.get('alert_id')
+        raw_id = request.args.get('alert_id', '')
+        alert_id = re.sub(r'[^a-zA-Z0-9_\-]', '', raw_id)[:60]
         if not alert_id:
-            return jsonify({"status": "error", "message": "alert_id is required"}), 400
+            return jsonify({"status": "error", "message": "Valid alert_id is required"}), 400
         alert_manager.delete_alert(alert_id)
         return jsonify({"status": "success", "message": "Alert deleted"})
 
 @app.route('/api/alerts/simulate', methods=['POST'])
 def api_simulate_alert():
     payload = request.get_json() or {}
-    action = payload.get('action', 'drop')
-    movie_id = payload.get('movie_id')
-    simulated_price = payload.get('price')
+    action = "surge" if payload.get('action') == "surge" else "drop"
+    movie_id = re.sub(r'[^a-zA-Z0-9_\-]', '', str(payload.get('movie_id') or ''))[:50]
+    
     city = payload.get('city', 'Mumbai')
-    theatre_name = payload.get('theatre_name')
+    if city not in CITIES:
+        city = 'Mumbai'
+
+    raw_theatre = payload.get('theatre_name')
+    theatre_name = re.sub(r'[<>]', '', str(raw_theatre))[:100] if raw_theatre else None
+
+    simulated_price = payload.get('price')
+    if simulated_price is not None:
+        try:
+            simulated_price = max(30, min(3000, int(float(simulated_price))))
+        except (ValueError, TypeError):
+            simulated_price = None
     
     result = alert_manager.simulate_price_fluctuation(
         action=action,

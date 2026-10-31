@@ -20,8 +20,12 @@ class PriceAlertManager:
         self._lock = threading.Lock()
 
     def add_alert(self, movie_id, movie_title, target_price, city="Mumbai", format_type="All", email=None):
-        """Adds a price alert watcher"""
+        """Adds a price alert watcher with memory cap protection"""
         with self._lock:
+            # Memory exhaustion defense: cap active alerts at 50 entries
+            if len(self.alerts) >= 50:
+                self.alerts.pop(0)
+
             alert = {
                 "id": f"alert-{int(time.time() * 1000)}",
                 "movie_id": movie_id,
@@ -77,6 +81,8 @@ class PriceAlertManager:
                     }
                     if not any(n["title"] == notif["title"] and n["price"] == current_min for n in self.notification_history):
                         self.notification_history.insert(0, notif)
+                        if len(self.notification_history) > 100:
+                            self.notification_history = self.notification_history[:100]
                 break
 
     def simulate_price_fluctuation(self, action="drop", movie_id=None, simulated_price=None, theatre_name=None, city="Mumbai"):
