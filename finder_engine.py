@@ -986,22 +986,141 @@ def haversine_distance_km(lat1, lon1, lat2, lon2):
     except Exception:
         return 5.0
 
+VENUE_COORDINATES = {
+    # Mumbai & MMR Venues
+    "phoenix palladium": (18.9950, 72.8250),
+    "palladium": (18.9950, 72.8250),
+    "lower parel": (18.9953, 72.8276),
+    "jio world drive": (19.0657, 72.8687),
+    "jio world plaza": (19.0665, 72.8680),
+    "bkc": (19.0657, 72.8687),
+    "bandra kurla complex": (19.0657, 72.8687),
+    "viviana mall": (19.2085, 72.9720),
+    "korum mall": (19.2030, 72.9695),
+    "inorbit mall, malad": (19.1730, 72.8355),
+    "inorbit malad": (19.1730, 72.8355),
+    "inorbit": (19.1730, 72.8355),
+    "infiniti malad": (19.1840, 72.8330),
+    "infinity malad": (19.1840, 72.8330),
+    "sion circle": (19.0410, 72.8631),
+    "moviemax: sion": (19.0410, 72.8631),
+    "maxus mall, bhayandar": (19.3015, 72.8525),
+    "maxus mall": (19.3015, 72.8525),
+    "bhayandar": (19.3012, 72.8526),
+    "bhayander": (19.3012, 72.8526),
+    "maratha mandir": (18.9695, 72.8195),
+    "mumbai central": (18.9695, 72.8195),
+    "magnet mall, bhandup": (19.1530, 72.9370),
+    "bhandup": (19.1528, 72.9372),
+    "huma, kanjurmarg": (19.1310, 72.9300),
+    "kanjurmarg": (19.1300, 72.9300),
+    "mira road": (19.2815, 72.8560),
+    "badlapur": (19.1670, 73.2370),
+    "vaishali cinema": (19.1670, 73.2370),
+    "palm beach galleria": (19.0680, 72.9980),
+    "nexus seawoods": (19.0195, 73.0185),
+    "seawoods": (19.0195, 73.0185),
+    "citi mall, andheri": (19.1385, 72.8330),
+    "infiniti andheri": (19.1412, 72.8312),
+    "fun republic mall, andheri": (19.1352, 72.8347),
+    "fun republic": (19.1352, 72.8347),
+    "c&b square": (19.1155, 72.8610),
+    "chakala": (19.1155, 72.8610),
+    "dynamix mall": (19.1067, 72.8335),
+    "oberoi mall": (19.1740, 72.8605),
+    "marketcity, kurla": (19.0880, 72.8890),
+    "r-city": (19.0995, 72.9165),
+    "r city": (19.0995, 72.9165),
+    "atria mall": (18.9902, 72.8143),
+    "worli": (18.9902, 72.8143),
+    "regal cinema": (18.9250, 72.8325),
+    "colaba": (18.9067, 72.8147),
+    "sterling cineplex": (18.9390, 72.8330),
+    "le reve": (19.0605, 72.8360),
+
+    # Delhi NCR Venues
+    "ambience mall, vasant kunj": (28.5282, 77.1554),
+    "vasant kunj": (28.5282, 77.1554),
+    "logix city centre": (28.5744, 77.3556),
+    "nehru place": (28.5492, 77.2526),
+    "epicuria": (28.5492, 77.2526),
+    "dlf avenue": (28.5244, 77.2066),
+    "saket": (28.5244, 77.2066),
+    "connaught place": (28.6315, 77.2167),
+
+    # Bengaluru Venues
+    "forum shantiniketan": (12.9904, 77.7289),
+    "whitefield": (12.9698, 77.7500),
+    "vega city mall": (12.9073, 77.6012),
+    "bannerghatta": (12.8876, 77.5970),
+    "garuda mall": (12.9702, 77.6097),
+    "forum orion mall": (13.0112, 77.5550),
+    "rajajinagar": (12.9915, 77.5525),
+    "koramangala": (12.9352, 77.6245),
+    "indiranagar": (12.9784, 77.6408),
+
+    # Hyderabad Venues
+    "sarath city capital mall": (17.4573, 78.3644),
+    "gachibowli": (17.4401, 78.3489),
+    "dsl virtue mall": (17.3995, 78.5590),
+    "uppal": (17.4057, 78.5591),
+    "inorbit mall, hitec city": (17.4357, 78.3838),
+    "hitec city": (17.4435, 78.3772),
+    "necklace road": (17.4258, 78.4682),
+    "prasads multiplex": (17.4123, 78.4650),
+    "khairatabad": (17.4123, 78.4608),
+
+    # Pune Venues
+    "seasons mall": (18.5195, 73.9315),
+    "magarpatta": (18.5135, 73.9242),
+    "bund garden": (18.5360, 73.8820),
+    "phoenix marketcity, viman nagar": (18.5620, 73.9168),
+    "viman nagar": (18.5679, 73.9143),
+
+    # Chennai Venues
+    "omr navallur": (12.8465, 80.2268),
+    "vr chennai": (13.0844, 80.1942),
+    "anna nagar": (13.0850, 80.2100),
+    "sathyam": (13.0538, 80.2625),
+    "royapettah": (13.0538, 80.2625),
+
+    # Ahmedabad Venues
+    "nexus ahmedabad one": (23.0350, 72.5293),
+    "vastrapur": (23.0350, 72.5293),
+    "acropolis mall": (23.0495, 72.5240),
+    "thaltej": (23.0500, 72.5100),
+
+    # Kolkata Venues
+    "quest mall": (22.5395, 88.3650),
+    "south city mall": (22.5004, 88.3626)
+}
+
 def resolve_theatre_coordinates(theatre_name, location, city="Mumbai"):
     """
     Deterministically resolves real-world GPS coordinates for any theatre and locality.
-    1. Direct match with locality coordinates
-    2. Substring search in theatre name + location string
+    1. Checks exact venue geocoding dictionary (malls, multiplex names)
+    2. Word-boundary regex lookup against locality coordinates (ordered by specificity)
     3. City center coordinates fallback
     """
-    if location in LOCALITY_COORDINATES:
-        return LOCALITY_COORDINATES[location]
-        
     combined = f"{theatre_name} {location}".lower()
-    for loc, coords in LOCALITY_COORDINATES.items():
-        if re.search(r'' + re.escape(loc.lower()) + r'', combined):
+    
+    # 1. Match specific venue / mall keywords
+    for venue_key, coords in sorted(VENUE_COORDINATES.items(), key=lambda x: len(x[0]), reverse=True):
+        if venue_key in combined:
             return coords
             
+    # 2. Match locality coordinates using regex word boundaries
+    for loc, coords in sorted(LOCALITY_COORDINATES.items(), key=lambda x: len(x[0]), reverse=True):
+        if re.search(r'\b' + re.escape(loc) + r'\b', combined, re.IGNORECASE):
+            return coords
+            
+    # 3. Clean location fallback
+    clean_loc = re.sub(r'\(.*?\)', '', location).split(',')[0].strip()
+    if clean_loc in LOCALITY_COORDINATES:
+        return LOCALITY_COORDINATES[clean_loc]
+        
     return CITY_CENTERS.get(city, (19.0760, 72.8777))
+
 
 def _resolve_theatre_location(vname, default_city="Mumbai"):
     v_clean = re.sub(r'\(.*?\)', '', vname)
