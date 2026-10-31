@@ -229,8 +229,8 @@ flowchart TD
 
 ### Step 1: Clone Repository
 ```bash
-git clone https://github.com/herambdbari1967-hue/Python-Mini-Project.git
-cd Python-Mini-Project
+git clone https://github.com/amey-bauchkar/CinePlus.git
+cd CinePlus
 ```
 
 ### Step 2: Set Up Virtual Environment
