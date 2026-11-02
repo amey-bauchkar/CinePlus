@@ -264,3 +264,4 @@ def get_best_wallet_deal(ticket_price, qty=2, theatre_chain="PVR INOX", selected
         "badge": best["badge"],
         "headline": best["headline"]
     }
+
