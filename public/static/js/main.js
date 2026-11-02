@@ -832,7 +832,7 @@ function renderComparisonModal(comp) {
     <!-- Wallet Matcher Offers Bar -->
     <div class="compare-wallet-bar">
       <div class="compare-wallet-info">
-        <span style="font-size: 18px;">💳</span>
+        <div class="wallet-icon-badge">💳</div>
         <div>
           <div class="wallet-active-title">
             <strong>Active Card Offers:</strong> <span id="compare-wallet-cards-summary">${userWalletCards.length > 0 ? `${userWalletCards.length} Card(s) Applied` : 'None Selected'}</span>
