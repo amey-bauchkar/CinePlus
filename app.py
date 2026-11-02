@@ -12,10 +12,11 @@ import webbrowser
 import threading
 from flask import Flask, render_template, request, jsonify, Response, send_from_directory
 from bank_offers import SUPPORTED_CARDS, calculate_card_benefit, get_best_wallet_deal
+from catalog_updater import add_movie_to_catalog, sync_new_theatrical_releases
 from finder_engine import (
     CITIES, THEATRES, NOW_SHOWING_MOVIES, UPCOMING_MOVIES, PROMO_CODES,
     get_movie_shows, get_upcoming_movies, get_price_comparison, get_booking_details, get_price_matrix,
-    resolve_youtube_trailer_id
+    resolve_youtube_trailer_id, get_ist_now
 )
 from price_tracker import alert_manager
 from data_exporter import export_shows_to_csv, export_comparison_to_csv
@@ -289,6 +290,52 @@ def api_delete_alert_alias(alert_id):
         return jsonify({"status": "error", "message": "Valid alert_id is required"}), 400
     alert_manager.delete_alert(clean_id)
     return jsonify({"status": "success", "message": "Alert deleted"})
+
+@app.route('/api/system/clock', methods=['GET'])
+def api_system_clock():
+    ist_now = get_ist_now()
+    curr_hour = ist_now.hour + (ist_now.minute / 60.0)
+    if curr_hour < 12.0:
+        window = "morning"
+        label = "Morning Shows (Discount Window)"
+    elif curr_hour < 16.0:
+        window = "matinee"
+        label = "Matinee Shows"
+    elif curr_hour < 20.0:
+        window = "evening"
+        label = "Prime Evening (Peak Demand)"
+    else:
+        window = "night"
+        label = "Late Night Shows"
+
+    return jsonify({
+        "status": "success",
+        "current_ist_time": ist_now.strftime("%I:%M %p"),
+        "current_date": ist_now.strftime("%d %b, %Y"),
+        "active_window": window,
+        "window_label": label
+    })
+
+@app.route('/api/catalog/add', methods=['POST'])
+def api_catalog_add():
+    payload = request.get_json() or {}
+    title = str(payload.get('title', '')).strip()
+    if not title:
+        return jsonify({"status": "error", "message": "Title is required"}), 400
+    res = add_movie_to_catalog(
+        title=title,
+        genre=payload.get('genre'),
+        certificate=payload.get('certificate'),
+        duration=payload.get('duration'),
+        poster=payload.get('poster'),
+        rating=payload.get('rating', 8.5)
+    )
+    return jsonify(res)
+
+@app.route('/api/catalog/sync', methods=['POST'])
+def api_catalog_sync():
+    res = sync_new_theatrical_releases()
+    return jsonify(res)
 
 @app.route('/api/alerts/simulate', methods=['POST'])
 def api_simulate_alert():

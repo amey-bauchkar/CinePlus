@@ -98,9 +98,24 @@
           </svg>
           <span style="white-space: nowrap;">Export&nbsp;CSV</span>
         </a>
+
+        <a href="javascript:void(0)" class="nav-link" onclick="openRegisterMovieModal()" title="Discover & Register New Theatrical Premieres">
+          <svg class="nav-link-svg" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="8" x2="12" y2="16"/>
+            <line x1="8" y1="12" x2="16" y2="12"/>
+          </svg>
+          <span style="white-space: nowrap;">+&nbsp;New&nbsp;Movie</span>
+        </a>
       </nav>
 
       <div class="nav-right">
+        <!-- Live Clock & Dynamic Time Window Capsule -->
+        <div id="live-clock-pill" class="live-clock-capsule" title="Real-Time Indian Standard Time (IST) Engine">
+          <span class="live-clock-dot"></span>
+          <span id="live-clock-text">IST 10:30 AM</span>
+        </div>
+
         <!-- City Selector -->
         <div class="city-selector-capsule">
           <svg class="pin-svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
@@ -545,6 +560,62 @@
       </div>
     </div>
   </div>
+
+  <!-- On-Demand Movie Discovery & Registration Modal -->
+  <div id="register-movie-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-card" style="max-width: 580px; width: 95vw;">
+      <div class="modal-header">
+        <div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span class="badge" style="background: rgba(255, 84, 0, 0.15); color: #ff5400; border: 1px solid rgba(255, 84, 0, 0.3);">ON-DEMAND DISCOVERY</span>
+            <h2 class="modal-title">Register New Movie Release</h2>
+          </div>
+          <p class="modal-subtitle">Add a newly premiered movie to CinePlus. It resolves the trailer, builds showtimes, and caches metadata permanently to disk.</p>
+        </div>
+        <button class="modal-close-btn" onclick="closeRegisterMovieModal()">×</button>
+      </div>
+
+      <div class="modal-body" style="display: flex; flex-direction: column; gap: 16px;">
+        <div style="background: #141414; border: 1px solid #292929; border-radius: 10px; padding: 14px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+            <strong>⚡ Quick Theatrical Sync</strong>
+            <button class="action-btn primary" type="button" style="padding: 6px 14px; font-size: 11px;" onclick="triggerTheatricalSync()">
+              Sync Latest Premieres
+            </button>
+          </div>
+          <span style="font-size: 11px; color: var(--color-olive-muted);">Checks for newly premiered theatrical blockbusters (e.g. Kalki 2, Pushpa 2, Avatar), stores full metadata to disk, and stops live polling.</span>
+        </div>
+
+        <div style="text-align: center; color: var(--color-olive-muted); font-size: 12px; font-weight: 700; letter-spacing: 0.05em;">
+          — OR REGISTER CUSTOM TITLE —
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <div>
+            <label style="display: block; font-size: 11px; font-weight: 700; color: #888888; text-transform: uppercase; margin-bottom: 4px;">Movie Title *</label>
+            <input type="text" id="reg-movie-title" placeholder="e.g. Dune: Part Three, Toxic, Kantara A Legend" style="width: 100%; padding: 10px 14px; background: #111111; border: 1px solid #333333; border-radius: 8px; color: #ffffff; font-size: 14px;">
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div>
+              <label style="display: block; font-size: 11px; font-weight: 700; color: #888888; text-transform: uppercase; margin-bottom: 4px;">Genre</label>
+              <input type="text" id="reg-movie-genre" placeholder="e.g. Action / Sci-Fi / Thriller" value="Action / Drama" style="width: 100%; padding: 10px 14px; background: #111111; border: 1px solid #333333; border-radius: 8px; color: #ffffff; font-size: 13px;">
+            </div>
+            <div>
+              <label style="display: block; font-size: 11px; font-weight: 700; color: #888888; text-transform: uppercase; margin-bottom: 4px;">Certificate & Duration</label>
+              <input type="text" id="reg-movie-cert" placeholder="e.g. UA • 2h 35m" value="UA • 2h 20m" style="width: 100%; padding: 10px 14px; background: #111111; border: 1px solid #333333; border-radius: 8px; color: #ffffff; font-size: 13px;">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="action-btn secondary" type="button" onclick="closeRegisterMovieModal()">Cancel</button>
+        <button class="action-btn primary" type="button" onclick="submitRegisterMovie()">Register & Cache Movie</button>
+      </div>
+    </div>
+  </div>
+
 
   <!-- Official HD Trailer Video Modal Player -->
   <div id="trailer-modal" class="modal-overlay" style="display: none;">

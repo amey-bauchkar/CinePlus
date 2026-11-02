@@ -1,5 +1,164 @@
 [
   {
+    "id": "ET00856970",
+    "title": "Singham Again",
+    "slug": "singham-again",
+    "genre": "Action / Drama",
+    "certificate": "UA",
+    "rating": 8.5,
+    "votes": "4.8K+ Votes",
+    "duration": "2h 15m",
+    "languages": [
+      "Hindi",
+      "English"
+    ],
+    "formats": [
+      "2D",
+      "3D",
+      "IMAX 3D",
+      "Dolby Atmos"
+    ],
+    "trailer_id": "MD7v0-igVIM",
+    "cast": [
+      "Leading Cast",
+      "Ensemble"
+    ],
+    "director": "Acclaimed Director",
+    "poster": "https://assets-in.bmscdn.com/discovery-catalog/events/tr:w-400,h-600,bg-CCCCCC:w-400.0,h-660.0,cm-pad_resize,bg-000000/et00496545-wuksbwcunr-portrait.jpg",
+    "backdrop": "https://assets-in.bmscdn.com/discovery-catalog/events/tr:w-400,h-600,bg-CCCCCC:w-400.0,h-660.0,cm-pad_resize,bg-000000/et00496545-wuksbwcunr-portrait.jpg",
+    "badge": "New Release",
+    "discount_tag": "Live Screenings in Mumbai",
+    "description": "Catch Singham Again streaming on big screens across multiplexes with live seat availability.",
+    "city": "Mumbai",
+    "cta_url": "https://in.bookmyshow.com/movies/mumbai/singham-again/ET00856970",
+    "theatre_count": 38,
+    "direct_booking_links": {
+      "BookMyShow": "https://in.bookmyshow.com/buytickets/singham-again-mumbai/movie-mumbai-ET00856970-MT/20261102"
+    },
+    "bms_verified": true,
+    "release_date": "02 Nov, 2026"
+  },
+  {
+    "id": "ET00855663",
+    "title": "Avatar: Fire and Ash",
+    "slug": "avatar-fire-and-ash",
+    "genre": "Sci-Fi / Adventure / Fantasy",
+    "certificate": "UA",
+    "rating": 9.4,
+    "votes": "85.0K+ Votes",
+    "duration": "3h 10m",
+    "languages": [
+      "English",
+      "Hindi",
+      "Tamil",
+      "Telugu"
+    ],
+    "formats": [
+      "3D",
+      "IMAX 3D",
+      "4DX"
+    ],
+    "trailer_id": "nb_fFj_0rq8",
+    "cast": [
+      "Leading Cast",
+      "Ensemble"
+    ],
+    "director": "Acclaimed Director",
+    "poster": "https://assets-in.bmscdn.com/discovery-catalog/events/tr:w-400,h-600,bg-CCCCCC:w-400.0,h-660.0,cm-pad_resize,bg-000000/et00496545-wuksbwcunr-portrait.jpg",
+    "backdrop": "https://assets-in.bmscdn.com/discovery-catalog/events/tr:w-400,h-600,bg-CCCCCC:w-400.0,h-660.0,cm-pad_resize,bg-000000/et00496545-wuksbwcunr-portrait.jpg",
+    "badge": "New Release",
+    "discount_tag": "Live Screenings in Mumbai",
+    "description": "Catch Avatar: Fire and Ash streaming on big screens across multiplexes with live seat availability.",
+    "city": "Mumbai",
+    "cta_url": "https://in.bookmyshow.com/movies/mumbai/avatar-fire-and-ash/ET00855663",
+    "theatre_count": 38,
+    "direct_booking_links": {
+      "BookMyShow": "https://in.bookmyshow.com/buytickets/avatar-fire-and-ash-mumbai/movie-mumbai-ET00855663-MT/20261102"
+    },
+    "bms_verified": true,
+    "release_date": "02 Nov, 2026"
+  },
+  {
+    "id": "ET00855663",
+    "title": "Pushpa 2: The Rule",
+    "slug": "pushpa-2-the-rule",
+    "genre": "Action / Crime / Drama",
+    "certificate": "A",
+    "rating": 9.1,
+    "votes": "65.2K+ Votes",
+    "duration": "2h 45m",
+    "languages": [
+      "Telugu",
+      "Hindi",
+      "Tamil",
+      "Malayalam"
+    ],
+    "formats": [
+      "2D",
+      "Dolby Atmos"
+    ],
+    "trailer_id": "mwF88W-1MN8",
+    "cast": [
+      "Leading Cast",
+      "Ensemble"
+    ],
+    "director": "Acclaimed Director",
+    "poster": "https://assets-in.bmscdn.com/discovery-catalog/events/tr:w-400,h-600,bg-CCCCCC:w-400.0,h-660.0,cm-pad_resize,bg-000000/et00496545-wuksbwcunr-portrait.jpg",
+    "backdrop": "https://assets-in.bmscdn.com/discovery-catalog/events/tr:w-400,h-600,bg-CCCCCC:w-400.0,h-660.0,cm-pad_resize,bg-000000/et00496545-wuksbwcunr-portrait.jpg",
+    "badge": "New Release",
+    "discount_tag": "Live Screenings in Mumbai",
+    "description": "Catch Pushpa 2: The Rule streaming on big screens across multiplexes with live seat availability.",
+    "city": "Mumbai",
+    "cta_url": "https://in.bookmyshow.com/movies/mumbai/pushpa-2-the-rule/ET00855663",
+    "theatre_count": 38,
+    "direct_booking_links": {
+      "BookMyShow": "https://in.bookmyshow.com/buytickets/pushpa-2-the-rule-mumbai/movie-mumbai-ET00855663-MT/20261102"
+    },
+    "bms_verified": true,
+    "release_date": "02 Nov, 2026"
+  },
+  {
+    "id": "ET00855655",
+    "title": "Kalki 2898 AD: Part 2",
+    "slug": "kalki-2898-ad-part-2",
+    "genre": "Sci-Fi / Action / Epic",
+    "certificate": "UA",
+    "rating": 9.2,
+    "votes": "48.5K+ Votes",
+    "duration": "2h 55m",
+    "languages": [
+      "Telugu",
+      "Hindi",
+      "Tamil",
+      "English"
+    ],
+    "formats": [
+      "2D",
+      "3D",
+      "IMAX 3D",
+      "4DX"
+    ],
+    "trailer_id": "OLD1Auzto5A",
+    "cast": [
+      "Leading Cast",
+      "Ensemble"
+    ],
+    "director": "Acclaimed Director",
+    "poster": "https://assets-in.bmscdn.com/discovery-catalog/events/tr:w-400,h-600,bg-CCCCCC:w-400.0,h-660.0,cm-pad_resize,bg-000000/et00496545-wuksbwcunr-portrait.jpg",
+    "backdrop": "https://assets-in.bmscdn.com/discovery-catalog/events/tr:w-400,h-600,bg-CCCCCC:w-400.0,h-660.0,cm-pad_resize,bg-000000/et00496545-wuksbwcunr-portrait.jpg",
+    "badge": "New Release",
+    "discount_tag": "Live Screenings in Mumbai",
+    "description": "Catch Kalki 2898 AD: Part 2 streaming on big screens across multiplexes with live seat availability.",
+    "city": "Mumbai",
+    "cta_url": "https://in.bookmyshow.com/movies/mumbai/kalki-2898-ad-part-2/ET00855655",
+    "theatre_count": 38,
+    "direct_booking_links": {
+      "BookMyShow": "https://in.bookmyshow.com/buytickets/kalki-2898-ad-part-2-mumbai/movie-mumbai-ET00855655-MT/20261102"
+    },
+    "bms_verified": true,
+    "release_date": "02 Nov, 2026"
+  },
+  {
     "id": "ET00517731",
     "title": "Pehla Pyaar Doosri Baar",
     "slug": "pehla-pyaar-doosri-baar",

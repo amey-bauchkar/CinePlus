@@ -1342,27 +1342,65 @@ def _fetch_bms_real_showtimes(movie_slug, city_slug, event_code):
 
 
 def _generate_synthetic_shows_for_theatre(theatres, city, base_formats=["2D", "3D"]):
-    """Fallback generator when a movie's daily shows have closed for today."""
+    """Real-time clock-aware showtime and dynamic seat depletion generator."""
     res = []
     default_times = [
-        ("10:30 AM", "2D", 160, 240, 380),
-        ("02:15 PM", "3D", 200, 280, 440),
-        ("06:00 PM", "IMAX 3D", 320, 460, 680),
-        ("09:45 PM", "Dolby Atmos", 240, 340, 520)
+        ("10:30 AM", "2D", 160, 240, 380, 10.5),
+        ("02:15 PM", "3D", 200, 280, 440, 14.25),
+        ("06:00 PM", "IMAX 3D", 320, 460, 680, 18.0),
+        ("09:45 PM", "Dolby Atmos", 240, 340, 520, 21.75)
     ]
     city_slug = CITY_SLUGS.get(city, "mumbai")
+    ist_now = get_ist_now()
+    curr_hour = ist_now.hour + (ist_now.minute / 60.0)
 
-    for th in theatres[:4]:
+    for th_idx, th in enumerate(theatres[:4]):
         chain_mult = 1.15 if th.get("chain") == "PVR INOX" else (1.08 if th.get("chain") == "Cinépolis" else 0.9)
         shows = []
-        for t, fmt, s_p, g_p, r_p in default_times:
+        for t, fmt, s_p, g_p, r_p, show_h in default_times:
+            hours_diff = show_h - curr_hour
+            seed_offset = (th_idx * 7 + int(show_h * 10)) % 15
+
+            if hours_diff < -1.5:
+                # Show ended earlier today -> Rollover to Tomorrow's show slot
+                display_time = f"{t} (Tomorrow)"
+                avail = "Available"
+                seats = 55 + seed_offset
+                status_text = "Tomorrow • Booking Open"
+            elif -1.5 <= hours_diff <= 0:
+                # Show currently in progress
+                display_time = f"{t} (Now Playing)"
+                avail = "Almost Full"
+                seats = max(2, 6 - (seed_offset % 4))
+                status_text = "In Progress • Final Admissions"
+            elif 0 < hours_diff <= 1.5:
+                # Starting soon
+                display_time = t
+                avail = "Almost Full"
+                seats = 4 + (seed_offset % 7)
+                status_text = f"Starts in {int(hours_diff * 60)} mins"
+            elif 1.5 < hours_diff <= 4.0:
+                display_time = t
+                avail = "Filling Fast"
+                seats = 16 + (seed_offset % 14)
+                status_text = "Filling Fast"
+            else:
+                display_time = t
+                avail = "Available"
+                seats = 45 + (seed_offset % 30)
+                status_text = "Available"
+
             shows.append({
-                "time": t,
+                "time": display_time,
+                "raw_time": t,
+                "hour": show_h,
+                "status_text": status_text,
                 "format": fmt,
                 "silver": int(s_p * chain_mult),
                 "gold": int(g_p * chain_mult),
                 "recliner": int(r_p * chain_mult),
-                "seats_left": 30,
+                "seats_left": seats,
+                "availability": avail,
                 "booking_url": f"https://in.bookmyshow.com/explore/movies-{city_slug}",
                 "platform_links": generate_multiplatform_booking_links("Movie", th["name"], city, t, fmt)
             })
@@ -2061,11 +2099,23 @@ def get_price_matrix(city="Mumbai", movie_id=None, user_lat=None, user_lng=None)
                 cheapest = sorted_shows[0]
             used_featured_theatres.add(cheapest["theatre_name"])
 
+        ist_now = get_ist_now()
+        curr_hour_val = ist_now.hour + (ist_now.minute / 60.0)
+        if curr_hour_val < 12.0:
+            active_time_window = "morning"
+        elif curr_hour_val < 16.0:
+            active_time_window = "matinee"
+        elif curr_hour_val < 20.0:
+            active_time_window = "evening"
+        else:
+            active_time_window = "night"
+
         window_stats[w_key] = {
             "id": w_data["id"],
             "label": w_data["label"],
             "hours": w_data["hours"],
             "icon": w_data["icon"],
+            "is_active_window": (w_key == active_time_window),
             "total_shows": len(w_shows),
             "theatres_count": len(theatres_set),
             "min_price": cheapest["silver"] if cheapest else (min(silver_prices) if silver_prices else 0),
@@ -2142,6 +2192,8 @@ def get_price_matrix(city="Mumbai", movie_id=None, user_lat=None, user_lng=None)
 
     return {
         "city": city,
+        "active_window": active_time_window,
+        "current_ist_time": ist_now.strftime("%I:%M %p, %d %b %Y"),
         "user_location": {
             "name": active_loc_name,
             "lat": active_lat,

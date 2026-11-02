@@ -3698,3 +3698,56 @@ button, input, select {
   margin-top: 2px;
   white-space: nowrap;
 }
+
+
+/* ==========================================================================
+   Real-Time Clock Engine & Dynamic Window Highlights
+   ========================================================================== */
+
+.live-clock-capsule {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(163, 230, 53, 0.08);
+  border: 1px solid rgba(163, 230, 53, 0.28);
+  border-radius: 9999px;
+  padding: 5px 12px;
+  font-family: var(--font-primary);
+  font-size: 11px;
+  font-weight: 700;
+  color: #a3e635;
+  user-select: none;
+}
+
+.live-clock-dot {
+  width: 7px;
+  height: 7px;
+  background: #a3e635;
+  border-radius: 50%;
+  box-shadow: 0 0 8px #a3e635;
+  animation: liveClockPulse 2s infinite ease-in-out;
+}
+
+@keyframes liveClockPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.35; transform: scale(0.85); }
+}
+
+.window-card.active-now {
+  border: 2px solid var(--brand-primary, #ff5400) !important;
+  background: rgba(255, 84, 0, 0.08) !important;
+  box-shadow: 0 0 20px rgba(255, 84, 0, 0.2);
+}
+
+.active-window-tag {
+  display: inline-block;
+  background: var(--brand-primary, #ff5400);
+  color: #ffffff;
+  font-size: 9px;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-left: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}

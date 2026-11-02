@@ -213,5 +213,43 @@ class CinePlusTestSuite(unittest.TestCase):
             self.assertIn('wallet_deal', first_row)
             self.assertIn('savings_amount', first_row)
 
+    def test_11_real_time_clock_and_matrix_active_window(self):
+        """Verify real-time IST clock API and active window resolution in Price Matrix"""
+        # 1. System clock endpoint
+        r_clock = self.client.get('/api/system/clock')
+        self.assertEqual(r_clock.status_code, 200)
+        clock_data = r_clock.get_json()
+        self.assertEqual(clock_data.get('status'), 'success')
+        self.assertIn('current_ist_time', clock_data)
+        self.assertIn('active_window', clock_data)
+        self.assertIn(clock_data.get('active_window'), ['morning', 'matinee', 'evening', 'night'])
+
+        # 2. Price matrix returns active_window and current_ist_time
+        r_mat = self.client.get('/api/price-matrix?city=Mumbai&movie_id=ET00496545')
+        self.assertEqual(r_mat.status_code, 200)
+        mat_data = r_mat.get_json().get('data', {})
+        self.assertIn('active_window', mat_data)
+        self.assertIn('current_ist_time', mat_data)
+        self.assertEqual(mat_data.get('active_window'), clock_data.get('active_window'))
+
+    def test_12_catalog_on_demand_sync_and_registration(self):
+        """Verify catalog sync and on-demand movie registration snapshot persistence"""
+        # 1. Trigger theatrical sync
+        r_sync = self.client.post('/api/catalog/sync')
+        self.assertEqual(r_sync.status_code, 200)
+        sync_data = r_sync.get_json()
+        self.assertEqual(sync_data.get('status'), 'success')
+        self.assertIn('count_added', sync_data)
+
+        # 2. Add movie validation (missing title)
+        r_add_bad = self.client.post('/api/catalog/add', json={})
+        self.assertEqual(r_add_bad.status_code, 400)
+
+        # 3. Add existing movie (duplicate check)
+        r_add_dup = self.client.post('/api/catalog/add', json={"title": "Clayface"})
+        self.assertEqual(r_add_dup.status_code, 200)
+        dup_data = r_add_dup.get_json()
+        self.assertEqual(dup_data.get('status'), 'exists')
+
 if __name__ == '__main__':
     unittest.main()

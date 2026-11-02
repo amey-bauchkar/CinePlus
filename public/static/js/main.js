@@ -1790,10 +1790,11 @@ function renderPriceMatrixContent(data) {
     `;
 
     cardsHtml += `
-      <div class="matrix-window-card">
+      <div class="matrix-window-card ${w.is_active_window ? 'active-now' : ''}">
         <div class="matrix-window-header">
           <div class="window-badge-row">
             <h3 class="window-name">${w.label}</h3>
+            ${w.is_active_window ? '<span class="active-window-tag">LIVE NOW</span>' : ''}
             <span class="window-count-pill">${w.total_shows} shows</span>
           </div>
           <div class="window-time-range">${w.hours}</div>
@@ -1986,6 +1987,88 @@ function saveAndApplyWallet() {
   }
 }
 
+// ==========================================================================
+// Real-Time IST Clock Engine & On-Demand Movie Discovery
+// ==========================================================================
+
+async function initRealTimeClock() {
+  const clockText = document.getElementById('live-clock-text');
+  if (!clockText) return;
+
+  async function updateClock() {
+    try {
+      const res = await fetch('/api/system/clock');
+      const data = await res.json();
+      if (data.status === 'success') {
+        clockText.textContent = `IST ${data.current_ist_time} • ${data.window_label.split('(')[0].trim()}`;
+      }
+    } catch (e) {
+      const now = new Date();
+      clockText.textContent = `IST ${now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+    }
+  }
+
+  updateClock();
+  setInterval(updateClock, 30000);
+}
+
+function openRegisterMovieModal() {
+  const m = document.getElementById('register-movie-modal');
+  if (m) m.style.display = 'flex';
+}
+
+function closeRegisterMovieModal() {
+  const m = document.getElementById('register-movie-modal');
+  if (m) m.style.display = 'none';
+}
+
+async function submitRegisterMovie() {
+  const titleInput = document.getElementById('reg-movie-title');
+  const genreInput = document.getElementById('reg-movie-genre');
+  const certInput = document.getElementById('reg-movie-cert');
+  const title = titleInput ? titleInput.value.trim() : '';
+
+  if (!title) {
+    alert('Please enter a movie title');
+    return;
+  }
+
+  try {
+    const res = await fetch('/api/catalog/add', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        title: title,
+        genre: genreInput ? genreInput.value.trim() : 'Action / Drama',
+        certificate: certInput ? certInput.value.trim() : 'UA'
+      })
+    });
+    const data = await res.json();
+    closeRegisterMovieModal();
+    if (data.status === 'success') {
+      showToast(`🎬 Registered & Cached: ${data.movie.title}`, 'drop');
+      if (titleInput) titleInput.value = '';
+      loadMovies();
+    } else {
+      showToast(data.message || 'Movie already exists in catalog', 'surge');
+    }
+  } catch (e) {
+    alert('Error registering movie');
+  }
+}
+
+async function triggerTheatricalSync() {
+  try {
+    const res = await fetch('/api/catalog/sync', { method: 'POST' });
+    const data = await res.json();
+    closeRegisterMovieModal();
+    showToast(`⚡ ${data.message}`, 'drop');
+    loadMovies();
+  } catch (e) {
+    alert('Error running theatrical sync');
+  }
+}
+
 // Global modal accessibility & keyboard shortcuts
 window.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
@@ -1995,13 +2078,15 @@ window.addEventListener('keydown', (e) => {
     closeBookingPortalModal();
     closeAlertsModal();
     closeWalletModal();
+    closeRegisterMovieModal();
   }
 });
 
 // Close modal when user clicks on dark backdrop outside modal card
 document.addEventListener('DOMContentLoaded', () => {
   loadWalletState();
-  const modalIds = ['trailer-modal', 'compare-modal', 'price-matrix-modal', 'booking-portal-modal', 'alerts-modal', 'wallet-modal'];
+  initRealTimeClock();
+  const modalIds = ['trailer-modal', 'compare-modal', 'price-matrix-modal', 'booking-portal-modal', 'alerts-modal', 'wallet-modal', 'register-movie-modal'];
   modalIds.forEach(id => {
     const el = document.getElementById(id);
     if (el) {
@@ -2013,6 +2098,7 @@ document.addEventListener('DOMContentLoaded', () => {
           else if (id === 'booking-portal-modal') closeBookingPortalModal();
           else if (id === 'alerts-modal') closeAlertsModal();
           else if (id === 'wallet-modal') closeWalletModal();
+          else if (id === 'register-movie-modal') closeRegisterMovieModal();
         }
       });
     }
