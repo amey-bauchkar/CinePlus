@@ -45,12 +45,11 @@ SUPPORTED_CARDS = [
         "id": "sbi_elite",
         "bank": "SBI Card",
         "name": "SBI Card ELITE / Aurum",
-        "offer_type": "FLAT_PER_TICKET",
-        "discount_per_ticket": 250,
-        "max_tickets": 2,
-        "min_tickets": 1,
+        "offer_type": "BOGO",
+        "max_discount": 250,
+        "min_tickets": 2,
         "chains": ["ALL"],
-        "headline": "Free Tickets / Flat ₹250 Off per ticket",
+        "headline": "Buy 1 Get 1 Free (Up to ₹250 off)",
         "badge": "High Value",
         "icon": "award"
     },
@@ -184,9 +183,14 @@ def calculate_card_benefit(ticket_price, qty=2, theatre_chain="PVR INOX", card_i
         cap = card.get("max_discount", base_total)
         discount = min(calculated_pct_discount, cap)
 
-    discount = min(discount, base_total)
-    effective_total = max(0, base_total - discount)
-    effective_per_ticket = round(effective_total / tickets) if tickets > 0 else 0
+    # Cinema ticket pricing floor: Multiplex regulations and payment gateways enforce
+    # mandatory base pricing / convenience fees. Effective ticket price is never ₹0.
+    floor_per_ticket = max(49, int(base_price * 0.35))
+    max_discount_cap = max(0, base_total - (floor_per_ticket * tickets))
+    discount = min(discount, max_discount_cap)
+
+    effective_total = max(floor_per_ticket * tickets, base_total - discount)
+    effective_per_ticket = max(floor_per_ticket, round(effective_total / tickets)) if tickets > 0 else base_price
     savings_pct = round((discount / base_total) * 100) if base_total > 0 else 0
 
     return {

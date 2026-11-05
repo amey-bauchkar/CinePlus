@@ -65,13 +65,20 @@ class TestBankOffers(unittest.TestCase):
         self.assertFalse(res_cinepolis['is_eligible'])
         self.assertEqual(res_cinepolis['discount_amount'], 0)
 
-    def test_05_sbi_elite_flat_per_ticket(self):
-        """Verify SBI Card ELITE flat ₹250 off per ticket"""
-        # 2 tickets @ ₹350 (Total base = ₹700) -> ₹250 off per ticket = ₹500 off
+    def test_05_sbi_elite_bogo_cap(self):
+        """Verify SBI Card ELITE Buy-1-Get-1 with ₹250 cap and zero-price prevention"""
+        # 2 tickets @ ₹350 (Total base = ₹700) -> BOGO capped at ₹250
         res = calculate_card_benefit(ticket_price=350, qty=2, theatre_chain="Single Screen", card_id="sbi_elite")
-        self.assertEqual(res['discount_amount'], 500)
-        self.assertEqual(res['effective_total'], 200)
-        self.assertEqual(res['effective_per_ticket'], 100)
+        self.assertEqual(res['discount_amount'], 250)
+        self.assertEqual(res['effective_total'], 450)
+        self.assertEqual(res['effective_per_ticket'], 225)
+
+        # 2 tickets @ ₹172 (Total base = ₹344) -> BOGO gives 1 ticket free (₹172), ticket never drops to ₹0
+        res_low = calculate_card_benefit(ticket_price=172, qty=2, theatre_chain="Single Screen", card_id="sbi_elite")
+        self.assertEqual(res_low['discount_amount'], 172)
+        self.assertEqual(res_low['effective_total'], 172)
+        self.assertEqual(res_low['effective_per_ticket'], 86)
+        self.assertGreater(res_low['effective_per_ticket'], 0)
 
     def test_06_get_best_wallet_deal(self):
         """Verify algorithm selects the card yielding maximum net savings"""

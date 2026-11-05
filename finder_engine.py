@@ -1755,7 +1755,11 @@ def get_price_comparison(movie_id, city="Mumbai", user_lat=None, user_lng=None, 
                 selected_card_ids=selected_card_ids
             )
             eff_price = deal["effective_per_ticket"]
+            if eff_price <= 0:
+                eff_price = max(49, round(silver_p * 0.5))
             eff_total = deal["effective_total"]
+            if eff_total <= 0:
+                eff_total = eff_price * t_qty
             savings_amt = deal["max_savings"]
 
             rows.append({

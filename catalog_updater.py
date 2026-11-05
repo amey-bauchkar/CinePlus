@@ -1,3 +1,30 @@
+KNOWN_THEATRICAL_POSTERS = {
+    "singham again": (
+        "https://upload.wikimedia.org/wikipedia/hi/0/04/Singham_Again_poster.jpg",
+        "https://upload.wikimedia.org/wikipedia/hi/0/04/Singham_Again_poster.jpg"
+    ),
+    "pushpa 2: the rule": (
+        "https://upload.wikimedia.org/wikipedia/en/1/11/Pushpa_2-_The_Rule.jpg",
+        "https://upload.wikimedia.org/wikipedia/en/1/11/Pushpa_2-_The_Rule.jpg"
+    ),
+    "pushpa 2": (
+        "https://upload.wikimedia.org/wikipedia/en/1/11/Pushpa_2-_The_Rule.jpg",
+        "https://upload.wikimedia.org/wikipedia/en/1/11/Pushpa_2-_The_Rule.jpg"
+    ),
+    "avatar: fire and ash": (
+        "https://upload.wikimedia.org/wikipedia/id/9/95/Avatar_Fire_and_Ash_poster.jpeg",
+        "https://upload.wikimedia.org/wikipedia/id/9/95/Avatar_Fire_and_Ash_poster.jpeg"
+    ),
+    "kalki 2898 ad: part 2": (
+        "https://upload.wikimedia.org/wikipedia/en/4/4c/Kalki_2898_AD.jpg",
+        "https://upload.wikimedia.org/wikipedia/en/4/4c/Kalki_2898_AD.jpg"
+    ),
+    "kalki 2898 ad": (
+        "https://upload.wikimedia.org/wikipedia/en/4/4c/Kalki_2898_AD.jpg",
+        "https://upload.wikimedia.org/wikipedia/en/4/4c/Kalki_2898_AD.jpg"
+    )
+}
+
 """
 catalog_updater.py
 On-demand movie discovery and catalog persistence module.
@@ -63,9 +90,16 @@ def add_movie_to_catalog(
     event_code = f"ET00{int(time.time() * 10) % 900000 + 100000}"
     trailer_id = resolve_youtube_trailer_id(clean_title)
 
-    default_poster = "https://assets-in.bmscdn.com/discovery-catalog/events/tr:w-400,h-600,bg-CCCCCC:w-400.0,h-660.0,cm-pad_resize,bg-000000/et00496545-wuksbwcunr-portrait.jpg"
-    final_poster = poster or default_poster
-    final_backdrop = backdrop or final_poster
+    known = KNOWN_THEATRICAL_POSTERS.get(clean_title.lower())
+    if known:
+        resolved_poster, resolved_backdrop = known
+    else:
+        # Fallback to authentic cinema film reel poster rather than another movie's poster
+        resolved_poster = "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=500&auto=format&fit=crop&q=80"
+        resolved_backdrop = resolved_poster
+
+    final_poster = poster or resolved_poster
+    final_backdrop = backdrop or resolved_backdrop
 
     new_entry = {
         "id": event_code,
@@ -129,7 +163,9 @@ def sync_new_theatrical_releases():
             "languages": ["Telugu", "Hindi", "Tamil", "English"],
             "formats": ["2D", "3D", "IMAX 3D", "4DX"],
             "rating": 9.2,
-            "votes": "48.5K+ Votes"
+            "votes": "48.5K+ Votes",
+            "poster": "https://upload.wikimedia.org/wikipedia/en/4/4c/Kalki_2898_AD.jpg",
+            "backdrop": "https://upload.wikimedia.org/wikipedia/en/4/4c/Kalki_2898_AD.jpg"
         },
         {
             "title": "Pushpa 2: The Rule",
@@ -139,7 +175,9 @@ def sync_new_theatrical_releases():
             "languages": ["Telugu", "Hindi", "Tamil", "Malayalam"],
             "formats": ["2D", "Dolby Atmos"],
             "rating": 9.1,
-            "votes": "65.2K+ Votes"
+            "votes": "65.2K+ Votes",
+            "poster": "https://upload.wikimedia.org/wikipedia/en/1/11/Pushpa_2-_The_Rule.jpg",
+            "backdrop": "https://upload.wikimedia.org/wikipedia/en/1/11/Pushpa_2-_The_Rule.jpg"
         },
         {
             "title": "Avatar: Fire and Ash",
@@ -149,7 +187,9 @@ def sync_new_theatrical_releases():
             "languages": ["English", "Hindi", "Tamil", "Telugu"],
             "formats": ["3D", "IMAX 3D", "4DX"],
             "rating": 9.4,
-            "votes": "85.0K+ Votes"
+            "votes": "85.0K+ Votes",
+            "poster": "https://upload.wikimedia.org/wikipedia/id/9/95/Avatar_Fire_and_Ash_poster.jpeg",
+            "backdrop": "https://upload.wikimedia.org/wikipedia/id/9/95/Avatar_Fire_and_Ash_poster.jpeg"
         }
     ]
 
@@ -163,7 +203,9 @@ def sync_new_theatrical_releases():
             languages=item["languages"],
             formats=item["formats"],
             rating=item["rating"],
-            votes=item["votes"]
+            votes=item["votes"],
+            poster=item.get("poster"),
+            backdrop=item.get("backdrop")
         )
         if res.get("status") == "success":
             added.append(res["movie"])

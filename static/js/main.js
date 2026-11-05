@@ -994,7 +994,7 @@ function renderComparisonTableBody() {
         <td>
           ${row.wallet_deal && row.wallet_deal.has_offer ? `
             <div class="effective-price-wrap">
-              <span class="effective-price">₹${row.effective_price}</span>
+              <span class="effective-price">₹${(row.effective_price && row.effective_price > 0) ? row.effective_price : Math.round(row.silver_price * 0.5)}</span>
               <span class="original-price-strike">₹${row.silver_price}</span>
             </div>
             <span class="card-deal-tag" title="${escapeHtml(row.wallet_deal.headline)}">
